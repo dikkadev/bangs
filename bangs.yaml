@@ -1,0 +1,236 @@
+default: 'https://www.google.com/search?q={}'
+
+# Other search engines:
+# default: 'https://www.bing.com/search?q={}'
+# default: 'https://duckduckgo.com/?q={}'
+
+# Search Engines
+Google:
+  bang: 'g'
+  url: 'https://www.google.com/search?q={}'
+
+Bing:
+  bang: 'b'
+  url: 'https://www.bing.com/search?q={}'
+
+DuckDuckGo:
+  bang: 'ddg'
+  url: 'https://duckduckgo.com/?q={}'
+
+GoogleImages:
+  bang: 'gi'
+  url: 'https://www.google.com/search?tbm=isch&q={}'
+
+Yahoo:
+  bang: 'yh'
+  url: 'https://search.yahoo.com/search?p={}'
+
+BraveSearch:
+  bang: 'brv'
+  url: 'https://search.brave.com/search?q={}'
+
+StartPage:
+  bang: 'spg'
+  url: 'https://www.startpage.com/sp/search?q={}'
+
+Qwant:
+  bang: 'qw'
+  url: 'https://www.qwant.com/?q={}'
+
+Baidu:
+  bang: 'bd'
+  url: 'https://www.baidu.com/s?wd={}'
+
+Yandex:
+  bang: 'yx'
+  url: 'https://yandex.com/search/?text={}'
+
+Swisscows:
+  bang: 'scows'
+  url: 'https://swisscows.com/web?query={}'
+
+Perplexity.ai:
+  bang: 'pxai'
+  url: 'https://www.perplexity.ai/search/new?q={}'
+
+Ask.com:
+  bang: 'ask'
+  url: 'https://www.ask.com/web?q={}'
+
+Lycos:
+  bang: 'ly'
+  url: 'https://search.lycos.com/web/?q={}'
+
+# Development & Programming
+GitHub:
+  bang: 'gh'
+  url: 'https://github.com/search?q={}'
+
+StackOverflow:
+  bang: 'so'
+  url: 'https://stackoverflow.com/search?q={}'
+
+MDN:
+  bang: 'mdn'
+  url: 'https://developer.mozilla.org/en-US/search?q={}'
+
+PyPI:
+  bang: 'pypi'
+  url: 'https://pypi.org/search/?q={}'
+
+NPM:
+  bang: 'npm'
+  url: 'https://www.npmjs.com/search?q={}'
+
+WolframAlpha:
+  bang: 'wa'
+  url: 'https://www.wolframalpha.com/input/?i={}'
+
+DevDocs:
+  bang: 'dd'
+  url: 'https://devdocs.io/#q={}'
+
+Kaggle:
+  bang: 'kg'
+  url: 'https://www.kaggle.com/search?q={}'
+
+# Reference
+Wikipedia:
+  bang: 'w'
+  url: 'https://en.wikipedia.org/wiki/{}'
+
+Dictionary:
+  bang: 'd'
+  url: 'https://www.dictionary.com/browse/{}'
+
+Thesaurus:
+  bang: 'th'
+  url: 'https://www.thesaurus.com/browse/{}'
+
+UrbanDictionary:
+  bang: 'ud'
+  url: 'https://www.urbandictionary.com/define.php?term={}'
+
+Britannica:
+  bang: 'br'
+  url: 'https://www.britannica.com/search?query={}'
+
+Quora:
+  bang: 'q'
+  url: 'https://www.quora.com/search?q={}'
+
+# Social Media
+Reddit:
+  bang: 'r'
+  url: 'https://www.reddit.com/search/?q={}'
+
+Twitter:
+  bang: 't'
+  url: 'https://twitter.com/search?q={}'
+
+Mastodon:
+  bang: 'ms'
+  url: 'https://mastodon.social/web/search?q={}'
+
+# Entertainment
+YouTube:
+  bang: 'y'
+  url: 'https://www.youtube.com/results?search_query={}'
+
+YouTubeAlso:
+  bang: 'yt'
+  url: 'https://www.youtube.com/results?search_query={}'
+
+YouTubeMusic:
+  bang: 'ym'
+  url: 'https://music.youtube.com/search?q={}'
+
+Netflix:
+  bang: 'nf'
+  url: 'https://www.netflix.com/search?q={}'
+
+IMDb:
+  bang: 'imdb'
+  url: 'https://www.imdb.com/find?q={}'
+
+Spotify:
+  bang: 'sp'
+  url: 'https://open.spotify.com/search/{}'
+
+Letterboxd:
+  bang: 'lb'
+  url: 'https://letterboxd.com/search/{}'
+
+SoundCloud:
+  bang: 'sc'
+  url: 'https://soundcloud.com/search?q={}'
+
+# Shopping
+Amazon:
+  bang: 'a'
+  url: 'https://www.amazon.de/s?k={}'
+
+Ebay:
+  bang: 'eb'
+  url: 'https://www.ebay.com/sch/i.html?_nkw={}'
+
+Etsy:
+  bang: 'et'
+  url: 'https://www.etsy.com/search?q={}'
+
+AliExpress:
+  bang: 'ae'
+  url: 'https://www.aliexpress.com/wholesale?SearchText={}'
+
+# Images
+Unsplash:
+  bang: 'us'
+  url: 'https://unsplash.com/s/photos/{}'
+
+Flickr:
+  bang: 'fl'
+  url: 'https://www.flickr.com/search/?text={}'
+
+Pexels:
+  bang: 'px'
+  url: 'https://www.pexels.com/search/{}/'
+
+# Mapping
+GoogleMaps:
+  bang: 'gm'
+  url: 'https://www.google.com/maps/?q={}'
+
+OpenStreetMap:
+  bang: 'osm'
+  url: 'https://www.openstreetmap.org/search?query={}'
+
+BingMaps:
+  bang: 'bm'
+  url: 'https://www.bing.com/maps?q={}'
+
+# Translation
+TranslateGoogle:
+  bang: 'gt'
+  url: 'https://translate.google.com/?sl=auto&tl=en&text={}&op=translate'
+
+Deepl:
+  bang: 'dl'
+  url: 'https://www.deepl.com/translator#en/de/{}'
+
+# 3D Printing & Design
+Thingiverse:
+  bang: 'tv'
+  url: 'https://www.thingiverse.com/search?q={}'
+
+Printables:
+  bang: 'pr'
+  url: 'https://www.printables.com/search?q={}'
+
+Thangs:
+  bang: 'tg'
+  url: 'https://thangs.com/search/{}'
+
+# Disabled
+# Archive.org:
+#   bang: 'ar'
+#   url: 'https://archive.org/search.php?query={}'
