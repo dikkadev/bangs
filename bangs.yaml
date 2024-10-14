@@ -8,229 +8,284 @@ default: 'https://www.google.com/search?q={}'
 Google:
   bang: 'g'
   url: 'https://www.google.com/search?q={}'
+  description: 'Popular global search engine by Google'
 
 Bing:
   bang: 'b'
   url: 'https://www.bing.com/search?q={}'
+  description: 'Microsoft’s search engine with AI integration'
 
 DuckDuckGo:
   bang: 'ddg'
   url: 'https://duckduckgo.com/?q={}'
+  description: 'Privacy-focused search engine'
 
 GoogleImages:
   bang: 'gi'
   url: 'https://www.google.com/search?tbm=isch&q={}'
+  description: 'Search for images using Google'
 
 Yahoo:
   bang: 'yh'
   url: 'https://search.yahoo.com/search?p={}'
+  description: 'Yahoo’s web search engine'
 
 BraveSearch:
   bang: 'brv'
   url: 'https://search.brave.com/search?q={}'
+  description: 'Privacy-focused search engine by Brave browser'
 
 StartPage:
   bang: 'spg'
   url: 'https://www.startpage.com/sp/search?q={}'
+  description: 'Anonymous search engine based on Google'
 
 Qwant:
   bang: 'qw'
   url: 'https://www.qwant.com/?q={}'
+  description: 'French search engine with privacy focus'
 
 Baidu:
   bang: 'bd'
   url: 'https://www.baidu.com/s?wd={}'
+  description: 'China’s most popular search engine'
 
 Yandex:
   bang: 'yx'
   url: 'https://yandex.com/search/?text={}'
+  description: 'Russia’s largest search engine'
 
 Swisscows:
   bang: 'scows'
   url: 'https://swisscows.com/web?query={}'
+  description: 'Family-friendly and privacy-oriented search engine'
 
 Perplexity.ai:
   bang: 'pxai'
   url: 'https://www.perplexity.ai/search/new?q={}'
+  description: 'AI-driven search engine with direct answers'
 
 Ask.com:
   bang: 'ask'
   url: 'https://www.ask.com/web?q={}'
+  description: 'Classic Q&A search engine'
 
 Lycos:
   bang: 'ly'
   url: 'https://search.lycos.com/web/?q={}'
+  description: 'One of the oldest search engines'
 
 # Development & Programming
 GitHub:
   bang: 'gh'
   url: 'https://github.com/search?q={}'
+  description: 'Search code repositories on GitHub'
 
 StackOverflow:
   bang: 'so'
   url: 'https://stackoverflow.com/search?q={}'
+  description: 'Search programming questions and answers'
 
 MDN:
   bang: 'mdn'
   url: 'https://developer.mozilla.org/en-US/search?q={}'
+  description: 'Web development documentation search'
 
 PyPI:
   bang: 'pypi'
   url: 'https://pypi.org/search/?q={}'
+  description: 'Search Python packages'
 
 NPM:
   bang: 'npm'
   url: 'https://www.npmjs.com/search?q={}'
+  description: 'Search Node.js packages'
 
 WolframAlpha:
   bang: 'wa'
   url: 'https://www.wolframalpha.com/input/?i={}'
+  description: 'Computational knowledge engine'
 
 DevDocs:
   bang: 'dd'
   url: 'https://devdocs.io/#q={}'
+  description: 'API documentation search engine'
 
 Kaggle:
   bang: 'kg'
   url: 'https://www.kaggle.com/search?q={}'
+  description: 'Search data science competitions and datasets'
 
 # Reference
 Wikipedia:
   bang: 'w'
   url: 'https://en.wikipedia.org/wiki/{}'
+  description: 'Online encyclopedia'
 
 Dictionary:
   bang: 'd'
   url: 'https://www.dictionary.com/browse/{}'
+  description: 'Online dictionary'
 
 Thesaurus:
   bang: 'th'
   url: 'https://www.thesaurus.com/browse/{}'
+  description: 'Search synonyms and antonyms'
 
 UrbanDictionary:
   bang: 'ud'
   url: 'https://www.urbandictionary.com/define.php?term={}'
+  description: 'Slang and modern terminology definitions'
 
 Britannica:
   bang: 'br'
   url: 'https://www.britannica.com/search?query={}'
+  description: 'Search articles from Encyclopedia Britannica'
 
 Quora:
   bang: 'q'
   url: 'https://www.quora.com/search?q={}'
+  description: 'Q&A platform for community-driven answers'
 
 # Social Media
 Reddit:
   bang: 'r'
   url: 'https://www.reddit.com/search/?q={}'
+  description: 'Community discussion forum'
 
 Twitter:
   bang: 't'
   url: 'https://twitter.com/search?q={}'
+  description: 'Social media and microblogging platform'
 
 Mastodon:
   bang: 'ms'
   url: 'https://mastodon.social/web/search?q={}'
+  description: 'Decentralized social network'
 
 # Entertainment
 YouTube:
   bang: 'y'
   url: 'https://www.youtube.com/results?search_query={}'
+  description: 'Video hosting and streaming platform'
 
 YouTubeAlso:
   bang: 'yt'
   url: 'https://www.youtube.com/results?search_query={}'
+  description: 'Alternative search for YouTube'
 
 YouTubeMusic:
   bang: 'ym'
   url: 'https://music.youtube.com/search?q={}'
+  description: 'Music streaming from YouTube'
 
 Netflix:
   bang: 'nf'
   url: 'https://www.netflix.com/search?q={}'
+  description: 'Streaming platform for TV shows and movies'
 
 IMDb:
   bang: 'imdb'
   url: 'https://www.imdb.com/find?q={}'
+  description: 'Search movies, TV shows, and actors'
 
 Spotify:
   bang: 'sp'
   url: 'https://open.spotify.com/search/{}'
+  description: 'Music streaming service'
 
 Letterboxd:
   bang: 'lb'
   url: 'https://letterboxd.com/search/{}'
+  description: 'Social network for movie lovers'
 
 SoundCloud:
   bang: 'sc'
   url: 'https://soundcloud.com/search?q={}'
+  description: 'Music streaming and sharing platform'
 
 # Shopping
 Amazon:
   bang: 'a'
   url: 'https://www.amazon.de/s?k={}'
+  description: 'E-commerce giant for online shopping'
 
 Ebay:
   bang: 'eb'
   url: 'https://www.ebay.com/sch/i.html?_nkw={}'
+  description: 'Online auction and shopping site'
 
 Etsy:
   bang: 'et'
   url: 'https://www.etsy.com/search?q={}'
+  description: 'Marketplace for handmade and vintage items'
 
 AliExpress:
   bang: 'ae'
   url: 'https://www.aliexpress.com/wholesale?SearchText={}'
+  description: 'Global e-commerce platform'
 
 # Images
 Unsplash:
   bang: 'us'
   url: 'https://unsplash.com/s/photos/{}'
+  description: 'Free high-resolution images'
 
 Flickr:
   bang: 'fl'
   url: 'https://www.flickr.com/search/?text={}'
+  description: 'Photo sharing and hosting service'
 
 Pexels:
   bang: 'px'
   url: 'https://www.pexels.com/search/{}/'
+  description: 'Free stock photography search'
 
 # Mapping
 GoogleMaps:
   bang: 'gm'
   url: 'https://www.google.com/maps/?q={}'
+  description: 'Search for locations on Google Maps'
 
 OpenStreetMap:
   bang: 'osm'
   url: 'https://www.openstreetmap.org/search?query={}'
+  description: 'Open-source mapping project'
 
 BingMaps:
   bang: 'bm'
   url: 'https://www.bing.com/maps?q={}'
+  description: 'Microsoft’s online mapping service'
 
 # Translation
 TranslateGoogle:
   bang: 'gt'
   url: 'https://translate.google.com/?sl=auto&tl=en&text={}&op=translate'
+  description: 'Google’s translation service'
 
 Deepl:
   bang: 'dl'
   url: 'https://www.deepl.com/translator#en/de/{}'
+  description: 'High-quality translation service'
 
 # 3D Printing & Design
 Thingiverse:
   bang: 'tv'
   url: 'https://www.thingiverse.com/search?q={}'
+  description: '3D printing designs and models'
 
 Printables:
   bang: 'pr'
   url: 'https://www.printables.com/search?q={}'
+  description: '3D models for printing'
 
 Thangs:
   bang: 'tg'
   url: 'https://thangs.com/search/{}'
+  description: 'Search engine for 3D models'
 
 # Disabled
 # Archive.org:
 #   bang: 'ar'
 #   url: 'https://archive.org/search.php?query={}'
+

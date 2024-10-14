@@ -115,12 +115,14 @@ default: 'https://www.google.com/search?q={}'
 # default: 'https://duckduckgo.com/?q={}'
 
 gh:
-  bang: "!gh"
+  bang: "gh"
   url: "https://github.com/Sett17/{}"
+  description: 'Search code repositories on GitHub.'
 
 g:
-  bang: "!g"
+  bang: "g"
   url: "https://www.google.com/search?q={}"
+  description: 'Popular global search engine by Google.'
 ```
 
 ## Setting Bangs as the Default Search Engine
@@ -130,6 +132,10 @@ This capability varies based on your browser.
 ### Chromium-Based Browsers
 
 ![s.dikka.dev/g/chrome set default search engine](https://s.dikka.dev/g/chrome%20set%20default%20search%20engine)
+
+### Firefox
+
+![s.dikka.dev/g/firefox set default search engine](https://s.dikka.dev/g/firefox%20set%20default%20search%20engine)
 
 ## Advanced Usage
 

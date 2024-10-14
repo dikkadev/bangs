@@ -57,8 +57,16 @@ func (q QueryURL) Augment(query string) (*url.URL, error) {
 }
 
 type Entry struct {
-	Bang string   `yaml:"bang" json:"bang"`
-	URL  QueryURL `yaml:"url" json:"url"`
+	Bang        string   `yaml:"bang" json:"bang"`
+	Description string   `yaml:"description" json:"description"`
+	URL         QueryURL `yaml:"url" json:"url"`
+}
+
+func (e Entry) String() (_ string) {
+	if e.Description == "" {
+		return fmt.Sprintf("{bang: %s, url: %s}", e.Bang, e.URL)
+	}
+	return fmt.Sprintf("{bang: %s, description: %s, url: %s}", e.Bang, e.Description, e.URL)
 }
 
 func (e Entry) Forward(query string, w http.ResponseWriter, r *http.Request) error {
@@ -110,9 +118,14 @@ func (bl *BangList) UnmarshalYAML(value *yaml.Node) error {
 		if !ok {
 			return fmt.Errorf("missing url field for entry %s", k)
 		}
+		description, ok := v["description"].(string)
+		if !ok {
+			description = ""
+		}
 		entry := Entry{
-			Bang: bangChars,
-			URL:  QueryURL(url),
+			Bang:        bangChars,
+			URL:         QueryURL(url),
+			Description: description,
 		}
 		bl.Entries[k] = entry
 		bl.byBang[bangChars] = entry
@@ -194,12 +207,41 @@ func (c *Config) DefaultForward(query string, w http.ResponseWriter, r *http.Req
 
 var config *Config
 
+func diffConfig(oldConfig, newConfig *Config) {
+	if oldConfig.Default != newConfig.Default {
+		slog.Info("Default bang URL changed", "old", oldConfig.Default, "new", newConfig.Default)
+	}
+
+	oldEntries := oldConfig.Entries.Entries
+	newEntries := newConfig.Entries.Entries
+
+	for key, newEntry := range newEntries {
+		oldEntry, exists := oldEntries[key]
+		if !exists {
+			slog.Debug("Added bang entry", "name", key, "entry", newEntry)
+		} else {
+			if !entriesEqual(oldEntry, newEntry) {
+				slog.Debug("Changed bang entry", "name", key, "old", oldEntry, "new", newEntry)
+			}
+		}
+	}
+
+	for key, oldEntry := range oldEntries {
+		if _, exists := newEntries[key]; !exists {
+			slog.Debug("Removed bang entry", "name", key, "entry", oldEntry)
+		}
+	}
+}
+
+func entriesEqual(a, b Entry) bool {
+	return a.Bang == b.Bang && a.Description == b.Description && a.URL == b.URL
+}
+
 func All() BangList {
 	return config.Entries
 }
 
 func Load(path string) error {
-	slog.Info("Loading bang configuration", "file", path)
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return err
@@ -211,9 +253,15 @@ func Load(path string) error {
 		return err
 	}
 
+	debugEnabled := slog.Default().Enabled(context.Background(), slog.LevelDebug)
+
+	if config != nil && debugEnabled {
+		diffConfig(config, &cfg)
+	}
+
 	config = &cfg
-	slog.Info("Loaded bang configuration", "N", len(config.Entries.Entries))
-	if slog.Default().Enabled(context.Background(), slog.LevelDebug) {
+	slog.Info("Loaded bang configuration", "file", path, "N", len(config.Entries.Entries))
+	if debugEnabled {
 		keys := make([]string, 0, len(config.Entries.Entries))
 		for k := range config.Entries.Entries {
 			keys = append(keys, k)
