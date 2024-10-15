@@ -28,10 +28,12 @@ jobs:
 
       - name: Tag and Push Docker image with version tag
         run: |
-          docker tag bangs ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:${{ github.ref_name }}
-          docker push ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:${{ github.ref_name }}
+          REPO=ghcr.io/${{ github.repository_owner }}/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          docker tag bangs $REPO:${{ github.ref_name }}
+          docker push $REPO:${{ github.ref_name }}
 
       - name: Tag and Push Docker image as latest
         run: |
-          docker tag bangs ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest
-          docker push ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest
+          REPO=ghcr.io/${{ github.repository_owner }}/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          docker tag bangs $REPO:latest
+          docker push $REPO:latest
