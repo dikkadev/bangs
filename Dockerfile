@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags "-X main.version=$VERSION" -o bangs .
+RUN CGO_ENABLED=0 go build -ldflags "-X main.version=$VERSION" -o bangs .
 
 FROM alpine:latest
 

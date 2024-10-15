@@ -1,12 +1,17 @@
 services:
   bangs:
-    image: ghcr.io/sett17/bangs:latest
+    # image: ghcr.io/sett17/bangs:latest
+    image: bangs
+    build: .
+    restart: unless-stopped
+    pull_policy: always
     ports:
       - 8080:8080
     volumes:
       - ./bangs.yaml:/app/bangs.yaml # Necessary to run
     environment:
       - BANGS_BANGFILE=/app/bangs.yaml  # Same path as volume
-      - BANGS_WATCH=true                # Wether to watch for changes in the file
+      - BANGS_WATCH=true                # Whether to watch for changes in the file
       # - BANGS_VERBOSE=true            # Uncomment to see debug logs
       # - BANGS_PORT=8080               # Uncomment to change the port inside the container
+
