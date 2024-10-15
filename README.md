@@ -131,11 +131,11 @@ This capability varies based on your browser.
 
 ### Chromium-Based Browsers
 
-![s.dikka.dev/g/chrome set default search engine](https://s.dikka.dev/g/chrome%20set%20default%20search%20engine)
+[s.dikka.dev/g/chrome set default search engine](https://s.dikka.dev/g/chrome%20set%20default%20search%20engine)
 
 ### Firefox
 
-![s.dikka.dev/g/firefox set default search engine](https://s.dikka.dev/g/firefox%20set%20default%20search%20engine)
+[s.dikka.dev/g/firefox set default search engine](https://s.dikka.dev/g/firefox%20set%20default%20search%20engine)
 
 ## Advanced Usage
 
