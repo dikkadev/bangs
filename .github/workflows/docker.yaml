@@ -13,6 +13,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: linux/amd64,linux/arm64
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -23,17 +28,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Docker image
-        run: make docker/build
-
-      - name: Tag and Push Docker image with version tag
-        run: |
-          REPO=ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          docker tag bangs $REPO:${{ github.ref_name }}
-          docker push $REPO:${{ github.ref_name }}
-
-      - name: Tag and Push Docker image as latest
-        run: |
-          REPO=ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          docker tag bangs $REPO:latest
-          docker push $REPO:latest
+      - name: Build and Push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ghcr.io/${{ github.repository.toLower() }}:${{ github.ref_name }}
+            ghcr.io/${{ github.repository.toLower() }}:latest
+          build-args: |
+            VERSION=${{ github.ref_name }}
