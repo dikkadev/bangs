@@ -39,7 +39,6 @@ func main() {
 
 	bangsFileDefault := getEnv("BANGS_BANGFILE", "")
 	debugLogsDefault := getEnvBool("BANGS_VERBOSE", false)
-	showHelpDefault := getEnvBool("BANGS_HELP", false)
 	portDefault := getEnv("BANGS_PORT", "8080")
 	watchBangFileDefault := getEnvBool("BANGS_WATCH", false)
 
@@ -50,7 +49,7 @@ func main() {
 	flag.BoolVarP(&debugLogs, "verbose", "v", debugLogsDefault, "Show debug logs")
 
 	var showHelp bool
-	flag.BoolVarP(&showHelp, "help", "h", showHelpDefault, "Show this help")
+	flag.BoolVarP(&showHelp, "help", "h", false, "Show this help")
 
 	var port string
 	flag.StringVarP(&port, "port", "p", portDefault, "Port to listen on")
