@@ -4,7 +4,9 @@ default: 'https://www.google.com/search?q={}'
 # default: 'https://www.bing.com/search?q={}'
 # default: 'https://duckduckgo.com/?q={}'
 
+# ================================================================================ 
 # Search Engines
+# ================================================================================ 
 Google:
   bang: 'g'
   url: 'https://www.google.com/search?q={}'
@@ -19,11 +21,6 @@ DuckDuckGo:
   bang: 'ddg'
   url: 'https://duckduckgo.com/?q={}'
   description: 'Privacy-focused search engine'
-
-GoogleImages:
-  bang: 'gi'
-  url: 'https://www.google.com/search?tbm=isch&q={}'
-  description: 'Search for images using Google'
 
 Yahoo:
   bang: 'yh'
@@ -75,7 +72,9 @@ Lycos:
   url: 'https://search.lycos.com/web/?q={}'
   description: 'One of the oldest search engines'
 
+# ================================================================================ 
 # Development & Programming
+# ================================================================================ 
 GitHub:
   bang: 'gh'
   url: 'https://github.com/search?q={}'
@@ -116,7 +115,9 @@ Kaggle:
   url: 'https://www.kaggle.com/search?q={}'
   description: 'Search data science competitions and datasets'
 
+# ================================================================================ 
 # Reference
+# ================================================================================ 
 Wikipedia:
   bang: 'w'
   url: 'https://en.wikipedia.org/wiki/{}'
@@ -147,23 +148,42 @@ Quora:
   url: 'https://www.quora.com/search?q={}'
   description: 'Q&A platform for community-driven answers'
 
+# ================================================================================ 
 # Social Media
+# ================================================================================ 
 Reddit:
   bang: 'r'
   url: 'https://www.reddit.com/search/?q={}'
-  description: 'Community discussion forum'
+  description: 'Community discussion forum; yeah right'
 
 Twitter:
   bang: 't'
   url: 'https://twitter.com/search?q={}'
-  description: 'Social media and microblogging platform'
+  description: 'Social media and microblogging platform for weirdos'
 
 Mastodon:
   bang: 'ms'
   url: 'https://mastodon.social/web/search?q={}'
-  description: 'Decentralized social network'
+  description: 'Decentralized social network for even weirder people'
 
+Facebook:
+  bang: 'fb'
+  url: 'https://www.facebook.com/search/top/?q={}'
+  description: 'Social media platform for old people'
+
+Instagram:
+  bang: 'ig'
+  url: 'https://www.instagram.com/explore/tags/{}'
+  description: 'Photo and video sharing platform'
+
+TikTok:
+  bang: 'tt'
+  url: 'https://www.tiktok.com/search?q={}'
+  description: 'Short-form video sharing platform'
+
+# ================================================================================ 
 # Entertainment
+# ================================================================================ 
 YouTube:
   bang: 'y'
   url: 'https://www.youtube.com/results?search_query={}'
@@ -204,7 +224,9 @@ SoundCloud:
   url: 'https://soundcloud.com/search?q={}'
   description: 'Music streaming and sharing platform'
 
+# ================================================================================ 
 # Shopping
+# ================================================================================ 
 Amazon:
   bang: 'a'
   url: 'https://www.amazon.de/s?k={}'
@@ -225,7 +247,14 @@ AliExpress:
   url: 'https://www.aliexpress.com/wholesale?SearchText={}'
   description: 'Global e-commerce platform'
 
+# ================================================================================ 
 # Images
+# ================================================================================ 
+GoogleImages:
+  bang: 'gi'
+  url: 'https://www.google.com/search?tbm=isch&q={}'
+  description: 'Search for images using Google'
+
 Unsplash:
   bang: 'us'
   url: 'https://unsplash.com/s/photos/{}'
@@ -241,7 +270,9 @@ Pexels:
   url: 'https://www.pexels.com/search/{}/'
   description: 'Free stock photography search'
 
+# ================================================================================ 
 # Mapping
+# ================================================================================ 
 GoogleMaps:
   bang: 'gm'
   url: 'https://www.google.com/maps/?q={}'
@@ -257,7 +288,9 @@ BingMaps:
   url: 'https://www.bing.com/maps?q={}'
   description: 'Microsoft’s online mapping service'
 
+# ================================================================================ 
 # Translation
+# ================================================================================ 
 TranslateGoogle:
   bang: 'gt'
   url: 'https://translate.google.com/?sl=auto&tl=en&text={}&op=translate'
@@ -268,7 +301,9 @@ Deepl:
   url: 'https://www.deepl.com/translator#en/de/{}'
   description: 'High-quality translation service'
 
+# ================================================================================ 
 # 3D Printing & Design
+# ================================================================================ 
 Thingiverse:
   bang: 'tv'
   url: 'https://www.thingiverse.com/search?q={}'

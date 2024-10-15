@@ -1,6 +1,8 @@
 # Change these variables as necessary.
-main_package_path = cmd/main.go
+main_package_path = .
 binary_name = bangs
+
+VERSION = $(shell git describe --tags --dirty)
 
 # ==================================================================================== #
 # HELPERS
@@ -61,12 +63,12 @@ tidy:
 .PHONY: build
 build:
 	# Include additional build steps, like TypeScript, SCSS or Tailwind compilation here...
-	go build -o=/tmp/bin/${binary_name} ${main_package_path}
+	go build -ldflags "-X main.version=`git describe --tags --dirty`" -o=/tmp/bin/${binary_name} ${main_package_path}
 
 ## run: run the  application
 .PHONY: run
 run: build
-	/tmp/bin/${binary_name} -v -w -b bangs.yaml
+	/tmp/bin/${binary_name} -vwb bangs.yaml
 
 ## run/live: run the application with reloading on file changes
 .PHONY: run/live
@@ -87,13 +89,6 @@ run/live:
 push: confirm audit no-dirty
 	git push
 
-## production/deploy: deploy the application to production
-.PHONY: production/deploy
-production/deploy: confirm audit no-dirty
-	GOOS=linux GOARCH=amd64 go build -ldflags='-s' -o=/tmp/bin/linux_amd64/${binary_name} ${main_package_path}
-	upx -5 /tmp/bin/linux_amd64/${binary_name}
-	# Include additional deployment steps here...
-
 # ==================================================================================== #
 # TEMPL
 # ==================================================================================== #
@@ -110,3 +105,17 @@ templinit:
 	mkdir -p ./web/
 	touch ./web/index.templ
 
+
+# ==================================================================================== #
+# DOCKER
+# ==================================================================================== #
+
+## docker/build: build the Docker image
+.PHONY: docker/build
+docker/build:
+	docker build --build-arg VERSION=$(VERSION) -t bangs .
+
+## docker/run: run the Docker container
+.PHONY: docker/run
+docker/run:
+	docker run -it --rm -p 8080:8080 -e BANGS_BANGFILE=bangs.yaml -e BANGS_VERBOSE=true -e BANGS_WATCH=true -v $(PWD)/bangs.yaml:/app/bangs.yaml bangs

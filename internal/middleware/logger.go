@@ -25,7 +25,19 @@ func Logger(logger *slog.Logger, msg string) func(http.Handler) http.Handler {
 			next.ServeHTTP(writer, r)
 			timeTaken := time.Since(start)
 
-			logger.Info(msg, "status", writer.StatusCode, "method", r.Method, "path", r.URL.Path, "queries", queries, "duration", timeTaken)
+			logArgs := []any{
+				"status", writer.StatusCode,
+				"method", r.Method,
+				"path", r.URL.Path,
+				"queries", queries,
+				"duration", timeTaken,
+			}
+
+			if writer.StatusCode == http.StatusFound {
+				logArgs = append(logArgs, "location", w.Header().Get("Location"))
+			}
+
+			logger.Info(msg, logArgs...)
 		})
 	}
 }
