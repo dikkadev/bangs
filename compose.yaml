@@ -1,8 +1,8 @@
 services:
   bangs:
-    # image: ghcr.io/sett17/bangs:latest
-    image: bangs
-    build: .
+    image: ghcr.io/sett17/bangs:latest
+    # image: bangs
+    # build: .
     restart: unless-stopped
     pull_policy: always
     ports:
