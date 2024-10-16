@@ -41,6 +41,7 @@ func main() {
 	debugLogsDefault := getEnvBool("BANGS_VERBOSE", false)
 	portDefault := getEnv("BANGS_PORT", "8080")
 	watchBangFileDefault := getEnvBool("BANGS_WATCH", false)
+	allowNoBangDefault := getEnvBool("BANGS_ALLOW_NO_BANG", false)
 
 	var bangsFile string
 	flag.StringVarP(&bangsFile, "bangs", "b", bangsFileDefault, "Path to the yaml file containing bang definitions")
@@ -56,6 +57,9 @@ func main() {
 
 	var watchBangFile bool
 	flag.BoolVarP(&watchBangFile, "watch", "w", watchBangFileDefault, "Reload bangs file on change")
+
+	var allowNoBang bool
+	flag.BoolVarP(&allowNoBang, "allow-no-bang", "a", allowNoBangDefault, "Allow requests with no bang to be handled as if they have a bang")
 
 	flag.Parse()
 
@@ -149,7 +153,7 @@ func main() {
 	mainRouter := http.NewServeMux()
 
 	mainRouter.Handle("/assets/", assets.Handler())
-	mainRouter.Handle("/", bangs.Handler())
+	mainRouter.Handle("/", bangs.Handler(allowNoBang))
 
 	// h2s := &http2.Server{}
 	server := &http.Server{

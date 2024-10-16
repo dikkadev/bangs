@@ -141,14 +141,21 @@ func (InputHasNoBangError) Error() string {
 	return "input does not contain a bang"
 }
 
+var allowNoBang = false
+
 func (bl BangList) PrepareInput(input string) (*Entry, string, error) {
 	if len(input) < 2 {
 		return nil, "", fmt.Errorf("len(query) was smaller than, which is not valid")
 	}
+	bangOffset := 1
 	if input[0] != '!' {
-		return nil, input, InputHasNoBangError(input)
+		if !allowNoBang {
+			return nil, "", InputHasNoBangError(input)
+		}
+		bangOffset = 0
 	}
-	split := strings.SplitN(input[1:], " ", 2) // should this also allow for tabs?
+
+	split := strings.SplitN(input[bangOffset:], " ", 2) // should this also allow for tabs?
 	if len(split) != 2 {
 		return nil, "", fmt.Errorf("query does not contain a bang and a query")
 	}
@@ -157,6 +164,9 @@ func (bl BangList) PrepareInput(input string) (*Entry, string, error) {
 
 	entry, ok := bl.byBang[bang]
 	if !ok {
+		if allowNoBang {
+			return nil, "", InputHasNoBangError(input)
+		}
 		return nil, "", fmt.Errorf("unknown bang: '%s'", bang)
 	}
 	return &entry, query, nil
@@ -271,7 +281,9 @@ func Load(path string) error {
 	return nil
 }
 
-func Handler() http.Handler {
+func Handler(doAllowNoBang bool) http.Handler {
+	allowNoBang = doAllowNoBang
+
 	router := http.NewServeMux()
 
 	router.HandleFunc("GET /list", listAll)
