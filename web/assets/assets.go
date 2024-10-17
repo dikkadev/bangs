@@ -1,7 +1,7 @@
 package assets
 
 import (
-	"bangs/internal/middleware"
+	"bangs/pkg/middleware"
 	"embed"
 	"log/slog"
 	"net/http"
