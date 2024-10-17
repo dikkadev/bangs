@@ -160,7 +160,14 @@ func (bl BangList) PrepareInput(input string) (*Entry, string, error) {
 		return nil, "", fmt.Errorf("query does not contain a bang and a query")
 	}
 
-	bang, query := split[0], split[1]
+	var (
+		bang, query string
+	)
+	if len(split) == 1 {
+		query = split[0]
+	} else {
+		bang, query = split[0], split[1]
+	}
 
 	entry, ok := bl.byBang[bang]
 	if !ok {
