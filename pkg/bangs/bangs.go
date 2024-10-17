@@ -144,8 +144,8 @@ func (InputHasNoBangError) Error() string {
 var allowNoBang = false
 
 func (bl BangList) PrepareInput(input string) (*Entry, string, error) {
-	if len(input) < 2 {
-		return nil, "", fmt.Errorf("len(query) was smaller than, which is not valid")
+	if !allowNoBang && len(input) < 2 {
+		return nil, "", fmt.Errorf("len(query) was smaller than 2, which is not valid")
 	}
 	bangOffset := 1
 	if input[0] != '!' {
@@ -155,8 +155,8 @@ func (bl BangList) PrepareInput(input string) (*Entry, string, error) {
 		bangOffset = 0
 	}
 
-	split := strings.SplitN(input[bangOffset:], " ", 2) // should this also allow for tabs?
-	if len(split) != 2 {
+	split := strings.SplitN(input[bangOffset:], " ", 2)
+	if !allowNoBang && len(split) != 2 {
 		return nil, "", fmt.Errorf("query does not contain a bang and a query")
 	}
 
@@ -167,6 +167,7 @@ func (bl BangList) PrepareInput(input string) (*Entry, string, error) {
 		if allowNoBang {
 			return nil, "", InputHasNoBangError(input)
 		}
+
 		return nil, "", fmt.Errorf("unknown bang: '%s'", bang)
 	}
 	return &entry, query, nil

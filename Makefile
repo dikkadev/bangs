@@ -68,13 +68,13 @@ build:
 ## run: run the  application
 .PHONY: run
 run: build
-	/tmp/bin/${binary_name} -vwb bangs.yaml
+	/tmp/bin/${binary_name} -vwab bangs.yaml
 
 ## run/live: run the application with reloading on file changes
 .PHONY: run/live
 run/live:
 	go run github.com/cosmtrek/air@v1.43.0 \
-		--build.cmd "make build" --build.bin "/tmp/bin/${binary_name} -v -w -b bangs.yaml" --build.delay "100" \
+		--build.cmd "make build" --build.bin "/tmp/bin/${binary_name} -v -w -a -b bangs.yaml" --build.delay "100" \
 		--build.exclude_dir "" \
 		--build.include_ext "go, tpl, tmpl, html, css, scss, js, ts, sql, jpeg, jpg, gif, png, bmp, svg, webp, ico" \
 		--misc.clean_on_exit "true"

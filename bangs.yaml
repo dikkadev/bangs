@@ -90,6 +90,11 @@ MDN:
   url: 'https://developer.mozilla.org/en-US/search?q={}'
   description: 'Web development documentation search'
 
+MSDN:
+  bang: 'msdn'
+  url: https://learn.microsoft.com/en-us/?terms={}'
+  description: 'Microsoft Developer Network documentation'
+
 PyPI:
   bang: 'pypi'
   url: 'https://pypi.org/search/?q={}'
