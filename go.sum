@@ -1,5 +1,7 @@
 github.com/fsnotify/fsnotify v1.7.0 h1:8JEhPFa5W2WU7YfeZzPNqzMP6Lwt7L2715Ggo0nosvA=
 github.com/fsnotify/fsnotify v1.7.0/go.mod h1:40Bi/Hjc2AVfZrqy+aj+yEI+/bRxZnMJyTJwOpGvigM=
+github.com/mattn/go-sqlite3 v1.14.24 h1:tpSp2G2KyMnnQu99ngJ47EIkWVmliIizyZBfPrBWDRM=
+github.com/mattn/go-sqlite3 v1.14.24/go.mod h1:Uh1q+B4BYcTPb+yiD3kU8Ct7aC0hY9fxUwlHK0RXw+Y=
 github.com/sett17/prettyslog v0.0.0-20241002182231-f70c71af7cf0 h1:QU9SyyFhdpLkwjlqEXbNA7wL/a9RqkXjW8R52n19+Ys=
 github.com/sett17/prettyslog v0.0.0-20241002182231-f70c71af7cf0/go.mod h1:Uvw0cdNG5cCfREVfxEnBVr5uidZ9yHJzyGcFf42kHaQ=
 github.com/spf13/pflag v1.0.5 h1:iy+VFUOCP1a+8yFto/drg2CJ5u0yRoB7fZw3DKv/JXA=
