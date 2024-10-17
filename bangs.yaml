@@ -92,7 +92,7 @@ MDN:
 
 MSDN:
   bang: 'msdn'
-  url: https://learn.microsoft.com/en-us/?terms={}'
+  url: https://learn.microsoft.com/en-us/search/?terms={}'
   description: 'Microsoft Developer Network documentation'
 
 PyPI:
