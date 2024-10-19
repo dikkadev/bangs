@@ -10,7 +10,7 @@ import (
 
 	"bangs/pkg/middleware"
 
-	"github.com/sett17/prettyslog"
+	"github.com/dikkadev/prettyslog"
 )
 
 func Handler(doAllowNoBang bool) http.Handler {

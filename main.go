@@ -10,7 +10,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/sett17/prettyslog"
+	"github.com/dikkadev/prettyslog"
 	flag "github.com/spf13/pflag"
 )
 
