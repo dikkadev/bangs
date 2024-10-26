@@ -92,6 +92,19 @@ https://s.dikka.dev/?q=OpenAI ChatGPT
 **Explanation:**  
 The above URL uses the default search engine defined in `bangs.yaml` to search for "OpenAI ChatGPT".
 
+#### 4. Double Hashtag Search
+
+Perform a search by typing a double hashtag `##` at the start of the query, which uses the default search engine.
+
+**Example:**
+
+```bash
+https://s.dikka.dev/?q=##OpenAI ChatGPT
+```
+
+**Explanation:**  
+The above URL uses the default search engine defined in `bangs.yaml` to search for "OpenAI ChatGPT" by stripping the `##` from the query.
+
 ### Command-Line Options
 
 | Option          | Short | Description                                     | Default         | Example                  |
