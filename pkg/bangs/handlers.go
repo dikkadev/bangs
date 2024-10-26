@@ -58,6 +58,13 @@ func searchByQuery(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if strings.HasPrefix(q, "##") {
+		slog.Debug("Double hashtag found, forwarding to default", "query", q)
+		q = strings.TrimPrefix(q, "##")
+		_ = registry.DefaultForward(q, w, r)
+		return
+	}
+
 	entry, query, err := registry.Entries.PrepareInput(q)
 	if err != nil {
 		if _, ok := err.(InputHasNoBangError); ok {
