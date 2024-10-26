@@ -41,6 +41,8 @@ func main() {
 	portDefault := getEnv("BANGS_PORT", "8080")
 	watchBangFileDefault := getEnvBool("BANGS_WATCH", false)
 	allowNoBangDefault := getEnvBool("BANGS_ALLOW_NO_BANG", false)
+	bangCharacterDefault := getEnv("BANGS_BANG_CHARACTER", "!")
+	ignoreCharactersDefault := getEnv("BANGS_IGNORE_CHARACTERS", "##")
 
 	var bangsFile string
 	flag.StringVarP(&bangsFile, "bangs", "b", bangsFileDefault, "Path to the yaml file containing bang definitions")
@@ -59,6 +61,12 @@ func main() {
 
 	var allowNoBang bool
 	flag.BoolVarP(&allowNoBang, "allow-no-bang", "a", allowNoBangDefault, "Allow requests with no bang to be handled as if they have a bang")
+
+	var bangCharacter string
+	flag.StringVar(&bangCharacter, "bang-character", bangCharacterDefault, "Character to use for bangs")
+
+	var ignoreCharacters string
+	flag.StringVar(&ignoreCharacters, "ignore-characters", ignoreCharactersDefault, "Characters to use for ignoring bangs")
 
 	flag.Parse()
 

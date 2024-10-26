@@ -113,6 +113,10 @@ The above URL uses the default search engine defined in `bangs.yaml` to search f
 | `--port`        | `-p`  | Port on which the server will run.              | `8080`          | `-p 9090`                |
 | `--verbose`     | `-v`  | Enable verbose debug logging.                   | `false`         | `-v`                     |
 | `--help`        | `-h`  | Show help message.                              | `false`         | `-h`                     |
+| `--watch`       | `-w`  | Reload bangs file on change.                    | `false`         | `-w`                     |
+| `--allow-no-bang` | `-a` | Allow requests with no bang to be handled as if they have a bang. | `false` | `-a` |
+| `--bang-character` |     | Character to use for bangs.                     | `!`             | `--bang-character !`     |
+| `--ignore-characters` | | Characters to use for ignoring bangs.           | `##`            | `--ignore-characters ##` |
 
 ## Configuration
 
@@ -121,6 +125,14 @@ Bangs are defined in a `bangs.yaml` file. Each bang maps a unique identifier to 
 **Example `bangs.yaml`:**
 
 ```yaml
+config:
+  bang_character: "!"
+  ignore_characters: "##"
+  verbose: false
+  port: 8080
+  watch_bang_file: false
+  allow_no_bang: false
+
 default: 'https://www.google.com/search?q={}'
 
 # Other search engines:

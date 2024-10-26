@@ -13,12 +13,24 @@ import (
 
 var registry *Registry
 
+type Config struct {
+	BangCharacter   string     `yaml:"bang_character" json:"bang_character"`
+	IgnoreCharacters string `yaml:"ignore_characters" json:"ignore_characters"`
+	Verbose         bool     `yaml:"verbose" json:"verbose"`
+	Port            int      `yaml:"port" json:"port"`
+	WatchBangFile   bool     `yaml:"watch_bang_file" json:"watch_bang_file"`
+	AllowNoBang     bool     `yaml:"allow_no_bang" json:"allow_no_bang"`
+}
+
 type Registry struct {
 	Default QueryURL `yaml:"default" json:"default"`
 	Entries BangList `yaml:",inline" json:"bangs"`
+	Config  Config   `yaml:"config" json:"config"`
 }
 
 var allowNoBang = false
+var bangCharacter = "!"
+var ignoreCharacters = "##"
 
 func Load(path string) error {
 	data, err := os.ReadFile(path)
@@ -47,6 +59,17 @@ func Load(path string) error {
 		}
 		slog.Debug("All loaded bangs", "names", keys)
 	}
+
+	if len(registry.Config.IgnoreCharacters) > 2 {
+		return fmt.Errorf("ignore_characters must be either 1 or 2 characters")
+	}
+	if len(registry.Config.BangCharacter) != 1 {
+		return fmt.Errorf("bang_charater must be exactly 1 characters")
+	}
+	allowNoBang = registry.Config.AllowNoBang
+	bangCharacter = registry.Config.BangCharacter
+	ignoreCharacters = registry.Config.IgnoreCharacters
+
 	return nil
 }
 
@@ -109,6 +132,7 @@ func (bl *BangList) UnmarshalYAML(value *yaml.Node) error {
 		return err
 	}
 	delete(tempMap, "default")
+	delete(tempMap, "config")
 
 	bl.Entries = make(map[string]Entry, len(tempMap))
 	bl.byBang = make(map[string]Entry, len(tempMap))
@@ -157,7 +181,7 @@ func (bl BangList) PrepareInput(input string) (*Entry, string, error) {
 		return nil, "", fmt.Errorf("len(query) was smaller than 2, which is not valid")
 	}
 	bangOffset := 1
-	if input[0] != '!' {
+	if input[0] != bangCharacter[0] {
 		if !allowNoBang {
 			return nil, "", InputHasNoBangError(input)
 		}

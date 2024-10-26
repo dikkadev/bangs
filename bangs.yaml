@@ -1,3 +1,11 @@
+config:
+  bang_character: "!"
+  ignore_characters: "##"
+  verbose: false
+  port: 8080
+  watch_bang_file: false
+  allow_no_bang: false
+
 default: 'https://www.google.com/search?q={}'
 
 # Other search engines:
@@ -328,4 +336,3 @@ Thangs:
 # Archive.org:
 #   bang: 'ar'
 #   url: 'https://archive.org/search.php?query={}'
-

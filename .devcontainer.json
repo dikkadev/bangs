@@ -1,0 +1,7 @@
+{
+  "tasks": {
+    "test": "go test -v -run='TestQueryUrl|TestLoadConfig' ./...",
+    "build": "go build -o bangs ",
+    "launch": "go build -o bangs .&& ./bangs -vwb bangs.yaml"
+  }
+}

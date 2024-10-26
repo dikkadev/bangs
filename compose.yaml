@@ -12,7 +12,8 @@ services:
     environment:
       - BANGS_BANGFILE=/app/bangs.yaml  # Same path as volume
       - BANGS_WATCH=true                # Whether to watch for changes in the file
-      # - BANGS_ALLOW_NO_BANG=true        # Whether to parse for bangs usage without '!'
-      # - BANGS_VERBOSE=true            # Uncomment to see debug logs
-      # - BANGS_PORT=8080               # Uncomment to change the port inside the container
-
+      - BANGS_ALLOW_NO_BANG=true        # Whether to parse for bangs usage without '!'
+      - BANGS_VERBOSE=true              # Uncomment to see debug logs
+      - BANGS_PORT=8080                 # Uncomment to change the port inside the container
+      - BANGS_BANG_CHARACTER=!
+      - BANGS_IGNORE_CHARACTERS=##
