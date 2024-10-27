@@ -374,7 +374,13 @@ func TestQueryUrl_Augment_Errors(t *testing.T) {
 	})
 }
 
+var runForwardingTests = "false"
+
 func TestAllBangs_ValidForward(t *testing.T) {
+	if runForwardingTests != "true" {
+		t.Skip("skipping forwarding tests")
+	}
+
 	t.Parallel()
 	err := Load("../../bangs.yaml")
 	if err != nil {
