@@ -42,6 +42,11 @@ audit: test
 test:
 	go test -v -race -buildvcs ./...
 
+## test/forwards: run all tests for forwards
+.PHONY: test/forwards
+test/forwards:
+	go test -ldflags="-X 'bangs/pkg/bangs.runForwardingTests=true'" -run TestAllBangs_ValidForward -v ./...
+
 ## test/cover: run all tests and display coverage
 .PHONY: test/cover
 test/cover:
