@@ -57,11 +57,6 @@ Swisscows:
   url: 'https://swisscows.com/web?query={}'
   description: 'Family-friendly and privacy-oriented search engine'
 
-Perplexity.ai:
-  bang: 'pxai'
-  url: 'https://www.perplexity.ai/search/new?q={}'
-  description: 'AI-driven search engine with direct answers'
-
 Ask.com:
   bang: 'ask'
   url: 'https://www.ask.com/web?q={}'
@@ -71,6 +66,25 @@ Lycos:
   bang: 'ly'
   url: 'https://search.lycos.com/web/?q={}'
   description: 'One of the oldest search engines'
+
+
+# ================================================================================
+# AI based
+# ================================================================================  
+Perplexity.ai:
+  bang: 'pxai'
+  url: 'https://www.perplexity.ai/search/new?q={}'
+  description: 'AI-driven search engine with direct answers'
+
+ChatGPT:
+  bang: 'cgpt'
+  url: 'https://www.chatgpt.com?q={}'
+  description: 'AI chatbot for generating text'
+
+Claude:
+  bang: 'cl'
+  url: 'https://claude.ai/new?q={}'
+  description: 'AI chatbot for generating text'
 
 # ================================================================================ 
 # Development & Programming
