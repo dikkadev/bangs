@@ -77,9 +77,9 @@ Perplexity.ai:
   description: 'AI-driven search engine with direct answers'
 
 ChatGPT:
-  bang: 'cgpt'
-  url: 'https://www.chatgpt.com?q={}'
-  description: 'AI chatbot for generating text'
+  bang: 'ai'
+  url: 'https://chatgpt.com/?q={}&hints=search&ref=ext'
+  description: 'Uses ChatGPT search mode'
 
 Claude:
   bang: 'cl'
