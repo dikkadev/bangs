@@ -6,7 +6,6 @@ A lightweight and extensible search engine that leverages "bangs" to quickly red
 
 - **Customizable Bangs**: Define and manage your own bangs through a simple `bangs.yaml` configuration file.
 - **Flexible Query Handling**: Perform searches using query parameters or clean URL paths.
-- **Command-Line Interface**: Easily configure and run the search engine with various CLI options.
 - **Default Search Engine**: Specify a default search URL for queries without a bang (only works when using `q` query parameter).
 - **Public Instances**: Accessible via [https://bang.dikka.dev](https://bang.dikka.dev) and [https://s.dikka.dev](https://s.dikka.dev) with HTTPS support.
 - **Extensible & Open**: Contributions to expand and refine bang definitions are highly encouraged.
@@ -25,7 +24,7 @@ Both URLs point to the same backend and support HTTPS for secure connections.
 
 ### Docker (Preferred)
 
-> **Note:** Docker support is forthcoming. Stay tuned for updates!
+> **Note:** Docker support is coming. Stay tuned for updates!
 
 - **Docker Image**: To be hosted on GitHub.
 - **Usage**: TBD
@@ -127,10 +126,10 @@ default: 'https://www.google.com/search?q={}'
 # default: 'https://www.bing.com/search?q={}'
 # default: 'https://duckduckgo.com/?q={}'
 
-gh:
-  bang: "gh"
-  url: "https://github.com/Sett17/{}"
-  description: 'Search code repositories on GitHub.'
+GitHub:
+  bang: 'gh'
+  url: 'https://github.com/search?q={}'
+  description: 'Search code repositories on GitHub'
 
 g:
   bang: "g"

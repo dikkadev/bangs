@@ -41,6 +41,7 @@ func main() {
 	portDefault := getEnv("BANGS_PORT", "8080")
 	watchBangFileDefault := getEnvBool("BANGS_WATCH", false)
 	allowNoBangDefault := getEnvBool("BANGS_ALLOW_NO_BANG", false)
+	ignoreCharDefault := getEnv("BANGS_IGNORE_CHAR", ".")
 
 	var bangsFile string
 	flag.StringVarP(&bangsFile, "bangs", "b", bangsFileDefault, "Path to the yaml file containing bang definitions")
@@ -59,6 +60,9 @@ func main() {
 
 	var allowNoBang bool
 	flag.BoolVarP(&allowNoBang, "allow-no-bang", "a", allowNoBangDefault, "Allow requests with no bang to be handled as if they have a bang")
+
+	var ignoreChar string
+	flag.StringVarP(&ignoreChar, "ignore-char", "i", ignoreCharDefault, "Start with this character to ignore bangs (only uses first character of the string)")
 
 	flag.Parse()
 
@@ -99,7 +103,7 @@ func main() {
 	mainRouter := http.NewServeMux()
 
 	mainRouter.Handle("/assets/", assets.Handler())
-	mainRouter.Handle("/", bangs.Handler(allowNoBang))
+	mainRouter.Handle("/", bangs.Handler(allowNoBang, ignoreChar))
 
 	server := &http.Server{
 		Addr:    ":" + port,

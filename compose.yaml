@@ -15,4 +15,5 @@ services:
       # - BANGS_ALLOW_NO_BANG=true        # Whether to parse for bangs usage without '!'
       # - BANGS_VERBOSE=true            # Uncomment to see debug logs
       # - BANGS_PORT=8080               # Uncomment to change the port inside the container
+      # - BANGS_IGNORE_CHAR='.'         # Uncomment to change the ignore character
 

@@ -19,6 +19,7 @@ type Registry struct {
 }
 
 var allowNoBang = false
+var ignoreChar = "."
 
 func Load(path string) error {
 	data, err := os.ReadFile(path)
@@ -152,9 +153,18 @@ func (InputHasNoBangError) Error() string {
 	return "input does not contain a bang"
 }
 
+type InputStartsWithIgnoreError string
+
+func (InputStartsWithIgnoreError) Error() string {
+	return "input starts with ignore character"
+}
+
 func (bl BangList) PrepareInput(input string) (*Entry, string, error) {
 	if !allowNoBang && len(input) < 2 {
 		return nil, "", fmt.Errorf("len(query) was smaller than 2, which is not valid")
+	}
+	if input[0] == ignoreChar[0] {
+		return nil, "", InputStartsWithIgnoreError(input)
 	}
 	bangOffset := 1
 	if input[0] != '!' {

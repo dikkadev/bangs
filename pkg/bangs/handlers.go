@@ -13,8 +13,9 @@ import (
 	"github.com/dikkadev/prettyslog"
 )
 
-func Handler(doAllowNoBang bool) http.Handler {
+func Handler(doAllowNoBang bool, ignoreCharPar string) http.Handler {
 	allowNoBang = doAllowNoBang
+	ignoreChar = ignoreCharPar
 
 	router := http.NewServeMux()
 
@@ -41,6 +42,7 @@ func listAll(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("Internal JSON error -.-\n%v\n", err), http.StatusInternalServerError)
 		return
 	}
+	w.Header().Set("Content-Type", "application/json")
 	_, err = w.Write(asJSON)
 	if err != nil {
 		slog.Error("Error writing response", "err", err)
@@ -72,6 +74,13 @@ func searchByQuery(w http.ResponseWriter, r *http.Request) {
 			_ = registry.DefaultForward(q, w, r)
 			return
 		}
+		if _, ok := err.(InputStartsWithIgnoreError); ok {
+			slog.Debug("Input starts with ignore character, removing ingoreChar and forwarding to default", "query", q)
+			q = q[1:]
+			_ = registry.DefaultForward(q, w, r)
+			return
+		}
+
 		slog.Error("Error preparing input", "err", err)
 		http.Error(w, fmt.Sprintf("Error preparing input: %v", err), http.StatusBadRequest)
 		return
