@@ -1,6 +1,7 @@
 # Change these variables as necessary.
 main_package_path = .
 binary_name = bangs
+image_name = imagename
 
 VERSION = $(shell git describe --tags --dirty)
 
@@ -8,11 +9,28 @@ VERSION = $(shell git describe --tags --dirty)
 # HELPERS
 # ==================================================================================== #
 
-## help: print this help message
+## print this help message
 .PHONY: help
 help:
 	@echo 'Usage:'
-	@sed -n 's/^##//p' ${MAKEFILE_LIST} | column -t -s ':' |  sed -e 's/^/ /'
+	@gawk ' \
+		/^#\s*=+/ { \
+			in_header = 1; \
+			next \
+		} \
+		in_header && /^# [A-Z]/ { \
+			print "\n" substr($$0, 3); \
+			in_header = 0; \
+			next \
+		} \
+		/^##/ { \
+			sub(/^##\s*/, ""); \
+			comment = $$0; \
+			getline name; \
+			split(name, a, " "); \
+			print "    " a[2] ":" comment; \
+		}' \
+	Makefile | column -t -s ':'
 
 .PHONY: confirm
 confirm:
@@ -90,32 +108,45 @@ push: confirm audit no-dirty
 	git push
 
 # ==================================================================================== #
-# TEMPL
-# ==================================================================================== #
-
-## generate go files from templ files
-.PHONY: templ
-templ:
-	find . -type f \( -name "*.templ" -or -name "*.css" -or -name "*.js" \) | entr -r  templ generate
-
-## add templ to project
-.PHONY: templinit
-templinit:
-	go get github.com/a-h/templ
-	mkdir -p ./web/
-	touch ./web/index.templ
-
-
-# ==================================================================================== #
 # DOCKER
 # ==================================================================================== #
 
 ## docker/build: build the Docker image
 .PHONY: docker/build
 docker/build:
-	docker build --build-arg VERSION=$(VERSION) -t bangs .
+	docker build --build-arg VERSION=$(VERSION) -t $(image_name) .
 
 ## docker/run: run the Docker container
 .PHONY: docker/run
 docker/run:
-	docker run -it --rm -p 8080:8080 -e BANGS_BANGFILE=bangs.yaml -e BANGS_VERBOSE=true -e BANGS_WATCH=true -v $(PWD)/bangs.yaml:/app/bangs.yaml bangs
+	docker run -it --rm -p 8080:8080 -e BANGS_BANGFILE=bangs.yaml -e BANGS_VERBOSE=true -e BANGS_WATCH=true -v $(PWD)/bangs.yaml:/app/bangs.yaml $(image_name)
+
+# ==================================================================================== #
+# Frontend stuff
+# ==================================================================================== #
+
+## tailwind: build the Tailwind css
+.PHONY: tailwid
+tailwind:
+	fd input.css | entr -r tailwindcss -w -i ./web/static/input.css -o ./web/assets/output.css
+
+## rustywind: sort tailwind classes
+.PHONY: rustywind
+rustywind:
+	fd -e templ -e html | entr -r rustywind --write .
+
+## generate go files from templ files
+.PHONY: templ
+templ:
+	find . -type f \( -name "*.templ" -or -name "*.css" -or -name "*.js" \) | entr -r bash -c 'TEMPL_EXPERIMENT=rawgo templ generate'
+
+## tmux-frontend: create 2x2 grid with four commands
+.PHONY: tmux-frontend
+tmux-frontend:
+	@tmux \
+		split-window -h \; \
+		send-keys 'make rustywind' C-m \; \
+		split-window -v \; \
+		send-keys 'make tailwind' C-m \; \
+		select-pane -L \; \
+		send-keys 'make templ' C-m \; \

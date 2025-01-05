@@ -1,0 +1,38 @@
+package web
+
+templ Index() {
+	<html>
+		<head>
+			<title>Bangs</title>
+			<script src="assets/htmx.js"></script>
+			<script src="assets/htmx-multi-swap.js"></script>
+			<link rel="stylesheet" href="/assets/output.css"/>
+			<!-- <script defer src="/assets/main.js"></script> -->
+		</head>
+		<body id="body" hx-ext="relative multi-swap" class="bg-background-default text-text-default">
+        </body>
+	</html>
+}
+
+templ Combine(first, second templ.Component) {
+	@first
+	@second
+}
+
+/*
+<div class="mb-6">
+    <input type="text" id="search" placeholder="Search bangs..."
+        class="p-2 w-full rounded border bg-background-700 text-text-default border-background-500"
+        oninput="filterBangs()" />
+</div>
+
+<!-- List of Bangs -->
+<div id="bangs-list" class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+    {for bang in bangs}
+    <div class="p-4 rounded bg-background-800">
+        <h3 class="text-lg font-semibold text-primary-default">{bang.Bang}</h3>
+        <p class="text-text-default">{bang.Description}</p>
+    </div>
+    {end}
+</div>
+*/
