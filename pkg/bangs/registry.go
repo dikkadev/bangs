@@ -134,10 +134,15 @@ func (bl *BangList) UnmarshalYAML(value *yaml.Node) error {
 		if !ok {
 			description = ""
 		}
+		category, ok := v["category"].(string)
+		if !ok {
+			category = ""
+		}
 		entry := Entry{
 			Bang:        bangChars,
 			URL:         QueryURL(urlStr),
 			Description: description,
+			Category:    category,
 		}
 		bl.Entries[k] = entry
 		bl.byBang[bangChars] = entry

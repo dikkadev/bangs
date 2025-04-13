@@ -40,8 +40,9 @@ func generateRandomBangs(N int) BangList {
 				bang += string(alphabet[j])
 			}
 			bl.Entries[bang] = Entry{
-				Bang: bang,
-				URL:  QueryURL("https://www.google.com/search?q={}"),
+				Bang:     bang,
+				URL:      QueryURL("https://www.google.com/search?q={}"),
+				Category: "",
 			}
 			bl.byBang[bang] = bl.Entries[bang]
 			generatedCount++

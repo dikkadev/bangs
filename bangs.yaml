@@ -11,61 +11,73 @@ Google:
   bang: 'g'
   url: 'https://www.google.com/search?q={}'
   description: 'Popular global search engine by Google'
+  category: 'Search'
 
 Bing:
   bang: 'b'
   url: 'https://www.bing.com/search?q={}'
-  description: 'Microsoft’s search engine with AI integration'
+  description: 'Microsoft''s search engine with AI integration'
+  category: 'Search'
 
 DuckDuckGo:
   bang: 'ddg'
   url: 'https://duckduckgo.com/?q={}'
   description: 'Privacy-focused search engine'
+  category: 'Search'
 
 Yahoo:
   bang: 'yh'
   url: 'https://search.yahoo.com/search?p={}'
-  description: 'Yahoo’s web search engine'
+  description: 'Yahoo''s web search engine'
+  category: 'Search'
 
 BraveSearch:
   bang: 'brv'
   url: 'https://search.brave.com/search?q={}'
   description: 'Privacy-focused search engine by Brave browser'
+  category: 'Search'
 
 StartPage:
   bang: 'spg'
   url: 'https://www.startpage.com/sp/search?q={}'
   description: 'Anonymous search engine based on Google'
+  category: 'Search'
 
 Qwant:
   bang: 'qw'
   url: 'https://www.qwant.com/?q={}'
   description: 'French search engine with privacy focus'
+  category: 'Search'
 
 Baidu:
   bang: 'bd'
   url: 'https://www.baidu.com/s?wd={}'
-  description: 'China’s most popular search engine'
+  description: 'China''s most popular search engine'
+  category: 'Search'
 
 Yandex:
   bang: 'yx'
   url: 'https://yandex.com/search/?text={}'
-  description: 'Russia’s largest search engine'
+  description: 'Russia''s largest search engine'
+  category: 'Search'
 
 Swisscows:
   bang: 'scows'
   url: 'https://swisscows.com/web?query={}'
   description: 'Family-friendly and privacy-oriented search engine'
+  category: 'Search'
 
 Ask.com:
   bang: 'ask'
   url: 'https://www.ask.com/web?q={}'
   description: 'Classic Q&A search engine'
+  category: 'Search'
 
 Lycos:
   bang: 'ly'
   url: 'https://search.lycos.com/web/?q={}'
   description: 'One of the oldest search engines'
+  category: 'Search'
 
 
 # ================================================================================
@@ -75,16 +87,19 @@ Perplexity.ai:
   bang: 'pxai'
   url: 'https://www.perplexity.ai/search/new?q={}'
   description: 'AI-driven search engine with direct answers'
+  category: 'AI'
 
 ChatGPT:
   bang: 'ai'
   url: 'https://chatgpt.com/?q={}&hints=search&ref=ext'
   description: 'Uses ChatGPT search mode'
+  category: 'AI'
 
 Claude:
   bang: 'cl'
   url: 'https://claude.ai/new?q={}'
   description: 'AI chatbot for generating text'
+  category: 'AI'
 
 # ================================================================================ 
 # Development & Programming
@@ -93,46 +108,55 @@ GitHub:
   bang: 'gh'
   url: 'https://github.com/search?q={}'
   description: 'Search code repositories on GitHub'
+  category: 'Development'
 
 StackOverflow:
   bang: 'so'
   url: 'https://stackoverflow.com/search?q={}'
   description: 'Search programming questions and answers'
+  category: 'Development'
 
 MDN:
   bang: 'mdn'
   url: 'https://developer.mozilla.org/en-US/search?q={}'
   description: 'Web development documentation search'
+  category: 'Development'
 
 MSDN:
   bang: 'msdn'
-  url: https://learn.microsoft.com/en-us/search/?terms={}'
+  url: 'https://learn.microsoft.com/en-us/search/?terms={}'
   description: 'Microsoft Developer Network documentation'
+  category: 'Development'
 
 PyPI:
   bang: 'pypi'
   url: 'https://pypi.org/search/?q={}'
   description: 'Search Python packages'
+  category: 'Development'
 
 NPM:
   bang: 'npm'
   url: 'https://www.npmjs.com/search?q={}'
   description: 'Search Node.js packages'
+  category: 'Development'
 
 WolframAlpha:
   bang: 'wa'
   url: 'https://www.wolframalpha.com/input/?i={}'
   description: 'Computational knowledge engine'
+  category: 'Development'
 
 DevDocs:
   bang: 'dd'
   url: 'https://devdocs.io/#q={}'
   description: 'API documentation search engine'
+  category: 'Development'
 
 Kaggle:
   bang: 'kg'
   url: 'https://www.kaggle.com/search?q={}'
   description: 'Search data science competitions and datasets'
+  category: 'Development'
 
 # ================================================================================ 
 # Reference
@@ -141,31 +165,43 @@ Wikipedia:
   bang: 'w'
   url: 'https://en.wikipedia.org/wiki/{}'
   description: 'Online encyclopedia'
+  category: 'Reference'
 
 Dictionary:
   bang: 'd'
   url: 'https://www.dictionary.com/browse/{}'
   description: 'Online dictionary'
+  category: 'Reference'
 
 Thesaurus:
   bang: 'th'
   url: 'https://www.thesaurus.com/browse/{}'
   description: 'Search synonyms and antonyms'
+  category: 'Reference'
 
 UrbanDictionary:
   bang: 'ud'
   url: 'https://www.urbandictionary.com/define.php?term={}'
   description: 'Slang and modern terminology definitions'
+  category: 'Reference'
 
 Britannica:
   bang: 'br'
   url: 'https://www.britannica.com/search?query={}'
   description: 'Search articles from Encyclopedia Britannica'
+  category: 'Reference'
 
 Quora:
   bang: 'q'
   url: 'https://www.quora.com/search?q={}'
   description: 'Q&A platform for community-driven answers'
+  category: 'Reference'
+
+Archive.org:
+  bang: 'ar'
+  url: 'https://archive.org/search.php?query={}'
+  description: 'Search archived web content and media'
+  category: 'Reference'
 
 # ================================================================================ 
 # Social Media
@@ -174,31 +210,37 @@ Reddit:
   bang: 'r'
   url: 'https://www.reddit.com/search/?q={}'
   description: 'Community discussion forum; yeah right'
+  category: 'Social'
 
 Twitter:
   bang: 't'
   url: 'https://twitter.com/search?q={}'
   description: 'Social media and microblogging platform for weirdos'
+  category: 'Social'
 
 Mastodon:
   bang: 'ms'
   url: 'https://mastodon.social/web/search?q={}'
   description: 'Decentralized social network for even weirder people'
+  category: 'Social'
 
 Facebook:
   bang: 'fb'
   url: 'https://www.facebook.com/search/top/?q={}'
   description: 'Social media platform for old people'
+  category: 'Social'
 
 Instagram:
   bang: 'ig'
   url: 'https://www.instagram.com/explore/tags/{}'
   description: 'Photo and video sharing platform'
+  category: 'Social'
 
 TikTok:
   bang: 'tt'
   url: 'https://www.tiktok.com/search?q={}'
-  description: 'Short-form video sharing platform'
+  description: 'Short-form video platform'
+  category: 'Social'
 
 # ================================================================================ 
 # Entertainment
@@ -207,41 +249,49 @@ YouTube:
   bang: 'y'
   url: 'https://www.youtube.com/results?search_query={}'
   description: 'Video hosting and streaming platform'
+  category: 'Entertainment'
 
 YouTubeAlso:
   bang: 'yt'
   url: 'https://www.youtube.com/results?search_query={}'
   description: 'Alternative search for YouTube'
+  category: 'Entertainment'
 
 YouTubeMusic:
   bang: 'ym'
   url: 'https://music.youtube.com/search?q={}'
   description: 'Music streaming from YouTube'
+  category: 'Entertainment'
 
 Netflix:
   bang: 'nf'
   url: 'https://www.netflix.com/search?q={}'
   description: 'Streaming platform for TV shows and movies'
+  category: 'Entertainment'
 
 IMDb:
   bang: 'imdb'
   url: 'https://www.imdb.com/find?q={}'
   description: 'Search movies, TV shows, and actors'
+  category: 'Entertainment'
 
 Spotify:
   bang: 'sp'
   url: 'https://open.spotify.com/search/{}'
   description: 'Music streaming service'
+  category: 'Entertainment'
 
 Letterboxd:
   bang: 'lb'
   url: 'https://letterboxd.com/search/{}'
   description: 'Social network for movie lovers'
+  category: 'Entertainment'
 
 SoundCloud:
   bang: 'sc'
   url: 'https://soundcloud.com/search?q={}'
   description: 'Music streaming and sharing platform'
+  category: 'Entertainment'
 
 # ================================================================================ 
 # Shopping
@@ -250,21 +300,25 @@ Amazon:
   bang: 'a'
   url: 'https://www.amazon.de/s?k={}'
   description: 'E-commerce giant for online shopping'
+  category: 'Shopping'
 
 Ebay:
   bang: 'eb'
   url: 'https://www.ebay.com/sch/i.html?_nkw={}'
   description: 'Online auction and shopping site'
+  category: 'Shopping'
 
 Etsy:
   bang: 'et'
   url: 'https://www.etsy.com/search?q={}'
   description: 'Marketplace for handmade and vintage items'
+  category: 'Shopping'
 
 AliExpress:
   bang: 'ae'
   url: 'https://www.aliexpress.com/wholesale?SearchText={}'
   description: 'Global e-commerce platform'
+  category: 'Shopping'
 
 # ================================================================================ 
 # Images
@@ -273,21 +327,25 @@ GoogleImages:
   bang: 'gi'
   url: 'https://www.google.com/search?tbm=isch&q={}'
   description: 'Search for images using Google'
+  category: 'Images'
 
 Unsplash:
   bang: 'us'
   url: 'https://unsplash.com/s/photos/{}'
   description: 'Free high-resolution images'
+  category: 'Images'
 
 Flickr:
   bang: 'fl'
   url: 'https://www.flickr.com/search/?text={}'
   description: 'Photo sharing and hosting service'
+  category: 'Images'
 
 Pexels:
   bang: 'px'
   url: 'https://www.pexels.com/search/{}/'
   description: 'Free stock photography search'
+  category: 'Images'
 
 # ================================================================================ 
 # Mapping
@@ -296,16 +354,19 @@ GoogleMaps:
   bang: 'gm'
   url: 'https://www.google.com/maps/?q={}'
   description: 'Search for locations on Google Maps'
+  category: 'Maps'
 
 OpenStreetMap:
   bang: 'osm'
   url: 'https://www.openstreetmap.org/search?query={}'
   description: 'Open-source mapping project'
+  category: 'Maps'
 
 BingMaps:
   bang: 'bm'
   url: 'https://www.bing.com/maps?q={}'
-  description: 'Microsoft’s online mapping service'
+  description: 'Microsoft''s online mapping service'
+  category: 'Maps'
 
 # ================================================================================ 
 # Translation
@@ -313,12 +374,14 @@ BingMaps:
 TranslateGoogle:
   bang: 'gt'
   url: 'https://translate.google.com/?sl=auto&tl=en&text={}&op=translate'
-  description: 'Google’s translation service'
+  description: 'Google''s translation service'
+  category: 'Tools'
 
 Deepl:
   bang: 'dl'
-  url: 'https://www.deepl.com/translator#en/de/{}'
+  url: 'https://www.deepl.com/translator#auto/en/{}'
   description: 'High-quality translation service'
+  category: 'Tools'
 
 # ================================================================================ 
 # 3D Printing & Design
@@ -327,19 +390,17 @@ Thingiverse:
   bang: 'tv'
   url: 'https://www.thingiverse.com/search?q={}'
   description: '3D printing designs and models'
+  category: '3D_Printing'
 
 Printables:
   bang: 'pr'
   url: 'https://www.printables.com/search?q={}'
   description: '3D models for printing'
+  category: '3D_Printing'
 
 Thangs:
   bang: 'tg'
   url: 'https://thangs.com/search/{}'
   description: 'Search engine for 3D models'
-
-# Disabled
-# Archive.org:
-#   bang: 'ar'
-#   url: 'https://archive.org/search.php?query={}'
+  category: '3D_Printing'
 

@@ -53,6 +53,7 @@ type Entry struct {
 	Bang        string   `yaml:"bang" json:"bang"`
 	Description string   `yaml:"description" json:"description"`
 	URL         QueryURL `yaml:"url" json:"url"`
+	Category    string   `yaml:"category,omitempty" json:"category,omitempty"`
 }
 
 func (e Entry) String() string {
@@ -63,7 +64,7 @@ func (e Entry) String() string {
 }
 
 func (e Entry) Equals(other Entry) bool {
-	return e.Bang == other.Bang && e.Description == other.Description && e.URL == other.URL
+	return e.Bang == other.Bang && e.Description == other.Description && e.URL == other.URL && e.Category == other.Category
 }
 
 func (e Entry) Forward(query string, w http.ResponseWriter, r *http.Request) error {
