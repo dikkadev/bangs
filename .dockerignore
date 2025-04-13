@@ -1,0 +1,28 @@
+# Git files
+.git
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+
+# IDE/Editor specific
+.vscode/
+.idea/
+
+# Go build cache/artifacts
+*.exe
+*.exe~
+*.test
+*.out
+bangs # Exclude the locally built binary if any
+
+# Frontend specific
+frontend/node_modules
+frontend/dist
+frontend/.env*
+frontend/.DS_Store
+
+# OS specific
+.DS_Store
+Thumbs.db 
