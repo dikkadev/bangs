@@ -10,6 +10,7 @@ A lightweight and extensible search engine that leverages "bangs" to quickly red
 - **Public Instances**: Accessible via [https://bang.dikka.dev](https://bang.dikka.dev) and [https://s.dikka.dev](https://s.dikka.dev) with HTTPS support.
 - **Extensible & Open**: Contributions to expand and refine bang definitions are highly encouraged.
 - **Robust Testing**: Automated Go workflows ensure the correctness and reliability of bang URLs.
+- **Categorized Bangs**: Organize bangs into categories for better management and user experience.
 
 ## Public Instances
 
@@ -24,10 +25,29 @@ Both URLs point to the same backend and support HTTPS for secure connections.
 
 ### Docker (Preferred)
 
-> **Note:** Docker support is coming. Stay tuned for updates!
+- **Docker Image**: Hosted on GitHub Container Registry (ghcr.io).
+- **Usage**: 
 
-- **Docker Image**: To be hosted on GitHub.
-- **Usage**: TBD
+  ```bash
+  docker run -d -p 8080:8080 -v ./bangs.yaml:/app/bangs.yaml -e BANGS_BANGFILE=/app/bangs.yaml ghcr.io/dikkadev/bangs:latest
+  ```
+
+  Or use with Docker Compose:
+
+  ```yaml
+  services:
+    bangs:
+      image: ghcr.io/dikkadev/bangs:latest
+      restart: unless-stopped
+      pull_policy: always
+      ports:
+        - 8080:8080
+      volumes:
+        - ./bangs.yaml:/app/bangs.yaml
+      environment:
+        - BANGS_BANGFILE=/app/bangs.yaml
+        - BANGS_WATCH=true
+  ```
 
 ### Build from Source
 
@@ -36,7 +56,7 @@ Ensure you have [Go](https://golang.org/dl/) installed (version 1.18 or later).
 1. **Clone the Repository**
 
     ```bash
-    git clone https://github.com/Sett17/bangs.git
+    git clone https://github.com/dikkadev/bangs.git
     cd bangs
     ```
 
@@ -57,11 +77,11 @@ Perform a search by specifying the bang and query as URL parameters using the pu
 **Example:**
 
 ```bash
-https://s.dikka.dev/?q=!gh Sett17/bangs
+https://s.dikka.dev/?q=!gh dikkadev/bangs
 ```
 
 **Explanation:**  
-The above URL uses the `!gh` bang to perform a GitHub search for the repository `Sett17/bangs`.
+The above URL uses the `!gh` bang to perform a GitHub search for the repository `dikkadev/bangs`.
 
 With query-based searches, you also have the option to omit the bang and use the default search engine defined in `bangs.yaml`. This is useful when you want to use bangs as the default search engine in your browser, so you do not need to specify a bang every time.
 
@@ -72,7 +92,7 @@ Perform a search by embedding the bang and query directly into the URL path usin
 **Example:**
 
 ```bash
-https://s.dikka.dev/!gh/Sett17/bangs
+https://s.dikka.dev/!gh/dikkadev/bangs
 ```
 
 **Explanation:**  
@@ -115,7 +135,7 @@ The above URL uses the default search engine defined in `bangs.yaml` to search f
 
 ## Configuration
 
-Bangs are defined in a `bangs.yaml` file. Each bang maps a unique identifier to a search URL containing a placeholder `{}` where the query will be inserted. Additionally, a `default` key can be specified to handle searches without a bang.
+Bangs are defined in a `bangs.yaml` file. Each bang maps a unique identifier to a search URL containing a placeholder `{}` where the query will be inserted. Additionally, a `default` key can be specified to handle searches without a bang, and a `category` field can be used to organize bangs into groups.
 
 **Example `bangs.yaml`:**
 
@@ -130,11 +150,13 @@ GitHub:
   bang: 'gh'
   url: 'https://github.com/search?q={}'
   description: 'Search code repositories on GitHub'
+  category: 'Development'
 
 g:
   bang: "g"
   url: "https://www.google.com/search?q={}"
   description: 'Popular global search engine by Google.'
+  category: 'Search'
 ```
 
 ## Setting Bangs as the Default Search Engine
@@ -182,10 +204,29 @@ Every pull request triggers the Go test workflow to ensure that new contribution
 
 ### Installation and Running with Docker
 
-> **Note:** Docker support is forthcoming. Stay tuned for updates!
+- **Docker Image**: Hosted on GitHub Container Registry (ghcr.io).
+- **Usage**: 
 
-- **Docker Image**: To be hosted on GitHub.
-- **Usage**: TBD
+  ```bash
+  docker run -d -p 8080:8080 -v ./bangs.yaml:/app/bangs.yaml -e BANGS_BANGFILE=/app/bangs.yaml ghcr.io/dikkadev/bangs:latest
+  ```
+
+  Or use with Docker Compose:
+
+  ```yaml
+  services:
+    bangs:
+      image: ghcr.io/dikkadev/bangs:latest
+      restart: unless-stopped
+      pull_policy: always
+      ports:
+        - 8080:8080
+      volumes:
+        - ./bangs.yaml:/app/bangs.yaml
+      environment:
+        - BANGS_BANGFILE=/app/bangs.yaml
+        - BANGS_WATCH=true
+  ```
 
 ## License
 
