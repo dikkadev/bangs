@@ -390,17 +390,17 @@ Thingiverse:
   bang: 'tv'
   url: 'https://www.thingiverse.com/search?q={}'
   description: '3D printing designs and models'
-  category: '3D_Printing'
+  category: '3D Printing'
 
 Printables:
   bang: 'pr'
   url: 'https://www.printables.com/search?q={}'
   description: '3D models for printing'
-  category: '3D_Printing'
+  category: '3D Printing'
 
 Thangs:
   bang: 'tg'
   url: 'https://thangs.com/search/{}'
   description: 'Search engine for 3D models'
-  category: '3D_Printing'
+  category: '3D Printing'
 

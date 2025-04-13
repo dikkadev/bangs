@@ -226,3 +226,11 @@ func (bl BangList) PrepareInputNaive(input string) (*Entry, string, error) {
 	}
 	return nil, "", fmt.Errorf("unknown bang: '%s'", bang)
 }
+
+// ListAllBangs returns the map of all loaded bang entries.
+func ListAllBangs() map[string]Entry {
+	if registry == nil {
+		return make(map[string]Entry) // Return empty map if not loaded
+	}
+	return registry.Entries.Entries
+}
