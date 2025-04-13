@@ -115,12 +115,16 @@ func main() {
 	// Serve index.html for the root and any other paths (SPA routing)
 	mainRouter.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// If the requested file exists in dist, serve it (e.g., favicon.ico)
-		filePath := "./frontend/dist" + r.URL.Path
-		if _, err := os.Stat(filePath); err == nil {
+		absPath, err := filepath.Abs(filepath.Join("./frontend/dist", r.URL.Path))
+		if err != nil || !strings.HasPrefix(absPath, filepath.Clean("./frontend/dist")) {
+			http.ServeFile(w, r, "./frontend/dist/index.html")
+			return
+		}
+		if _, err := os.Stat(absPath); err == nil {
 			// Check if it's actually a file and not a directory
-			info, _ := os.Stat(filePath)
+			info, _ := os.Stat(absPath)
 			if !info.IsDir() {
-				http.ServeFile(w, r, filePath)
+				http.ServeFile(w, r, absPath)
 				return
 			}
 		}
