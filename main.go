@@ -3,15 +3,23 @@ package main
 import (
 	"bangs/internal/watcher"
 	"bangs/pkg/bangs"
+	"embed"
 	"fmt"
+	"io"
+	"io/fs"
 	"log/slog"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/dikkadev/prettyslog"
 	flag "github.com/spf13/pflag"
 )
+
+//go:embed all:frontend/dist
+var embeddedFrontend embed.FS
 
 var version = "dev"
 
@@ -101,36 +109,65 @@ func main() {
 
 	mainRouter := http.NewServeMux()
 
-	// Serve static files from frontend/dist
-	fs := http.FileServer(http.Dir("./frontend/dist"))
-	mainRouter.Handle("/assets/", fs) // Serve specific assets like JS, CSS
+	// --- Serve Frontend from Embedded Filesystem ---
 
-	// API endpoints (like listing bangs)
-	apiHandler := bangs.Handler(false, ".")                          // Create a handler instance for API routes (params don't matter much here)
-	mainRouter.Handle("/api/", http.StripPrefix("/api", apiHandler)) // Mount API handler under /api/
+	// Create a sub-filesystem rooted at "frontend/dist"
+	frontendFS, err := fs.Sub(embeddedFrontend, "frontend/dist")
+	if err != nil {
+		slog.Error("Failed to create sub VFS for frontend", "err", err)
+		os.Exit(1)
+	}
+	frontendFileServer := http.FileServer(http.FS(frontendFS))
 
-	// Handle bang redirection logic at /bang (uses a separate instance with correct params)
-	mainRouter.Handle("/bang", bangs.Handler(allowNoBang, ignoreChar))
-
-	// Serve index.html for the root and any other paths (SPA routing)
+	// Serve static assets (/assets, /favicon.ico, etc.)
 	mainRouter.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		// If the requested file exists in dist, serve it (e.g., favicon.ico)
-		absPath, err := filepath.Abs(filepath.Join("./frontend/dist", r.URL.Path))
-		if err != nil || !strings.HasPrefix(absPath, filepath.Clean("./frontend/dist")) {
-			http.ServeFile(w, r, "./frontend/dist/index.html")
-			return
-		}
-		if _, err := os.Stat(absPath); err == nil {
-			// Check if it's actually a file and not a directory
-			info, _ := os.Stat(absPath)
-			if !info.IsDir() {
-				http.ServeFile(w, r, absPath)
+		// Clean the path to prevent traversal issues within the embedded FS
+		// Although less critical now, it's good practice.
+		path := filepath.Clean(r.URL.Path)
+
+		// Check if the requested path (excluding '/') corresponds to a file
+		// in the embedded FS. We check paths like /assets/..., /favicon.ico
+		if path != "/" {
+			// fs.Stat needs a path without the leading slash
+			if _, err := fs.Stat(frontendFS, strings.TrimPrefix(path, "/")); err == nil {
+				frontendFileServer.ServeHTTP(w, r)
 				return
 			}
 		}
-		// Otherwise, serve index.html
-		http.ServeFile(w, r, "./frontend/dist/index.html")
+
+		// If it's the root path or the file wasn't found, serve index.html
+		// We need to manually open and serve index.html because http.FileServer
+		// doesn't automatically serve index.html for directories in embedded FS.
+		index, err := frontendFS.Open("index.html")
+		if err != nil {
+			slog.Error("Failed to open embedded index.html", "err", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+		defer index.Close()
+
+		// Get file info for headers (optional but good)
+		info, err := index.Stat()
+		if err != nil {
+			slog.Error("Failed to stat embedded index.html", "err", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		// Serve the index.html content
+		http.ServeContent(w, r, "index.html", info.ModTime(), index.(io.ReadSeeker))
 	})
+
+	// --- API and Bang Handlers ---
+
+	// API endpoints (like listing bangs)
+	apiHandler := bangs.Handler(false, ".") // Create a handler instance for API routes
+	mainRouter.Handle("/api/", http.StripPrefix("/api", apiHandler))
+
+	// Handle bang redirection logic at /bang
+	mainRouter.Handle("/bang", bangs.Handler(allowNoBang, ignoreChar))
+
+	// --- Start Server ---
 
 	server := &http.Server{
 		Addr:    ":" + port,
