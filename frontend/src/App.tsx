@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <div className="min-h-screen text-white overflow-hidden bg-black">
       {/* Diagonal accent line */}
-      <div className="fixed top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 transform -rotate-0 origin-top-left z-10"></div>
+      <div className="fixed top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 transform -rotate-0 origin-top-left z-25"></div>
 
       {/* Background grid */}
       <div
