@@ -1,4 +1,4 @@
-FROM node:20-alpine AS frontend-builder
+FROM --platform=$BUILDPLATFORM node:20 AS frontend-builder
 WORKDIR /app
 
 # Copy frontend source code
@@ -7,9 +7,9 @@ COPY frontend/ ./frontend/
 WORKDIR /app/frontend
 
 # Install bun and build frontend
-RUN npm install -g bun
-RUN bun install
-RUN bun run build
+RUN curl -fsSL https://bun.sh/install | bash
+RUN $HOME/.bun/bin/bun install
+RUN $HOME/.bun/bin/bun run build
 
 # --- Go Builder Stage ---
 FROM golang:1.23-alpine AS builder
