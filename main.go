@@ -3,7 +3,6 @@ package main
 import (
 	"bangs/internal/watcher"
 	"bangs/pkg/bangs"
-	"bangs/web/assets"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -102,8 +101,32 @@ func main() {
 
 	mainRouter := http.NewServeMux()
 
-	mainRouter.Handle("/assets/", assets.Handler())
-	mainRouter.Handle("/", bangs.Handler(allowNoBang, ignoreChar))
+	// Serve static files from frontend/dist
+	fs := http.FileServer(http.Dir("./frontend/dist"))
+	mainRouter.Handle("/assets/", fs) // Serve specific assets like JS, CSS
+
+	// API endpoints (like listing bangs)
+	apiHandler := bangs.Handler(false, ".")                          // Create a handler instance for API routes (params don't matter much here)
+	mainRouter.Handle("/api/", http.StripPrefix("/api", apiHandler)) // Mount API handler under /api/
+
+	// Handle bang redirection logic at /bang (uses a separate instance with correct params)
+	mainRouter.Handle("/bang", bangs.Handler(allowNoBang, ignoreChar))
+
+	// Serve index.html for the root and any other paths (SPA routing)
+	mainRouter.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		// If the requested file exists in dist, serve it (e.g., favicon.ico)
+		filePath := "./frontend/dist" + r.URL.Path
+		if _, err := os.Stat(filePath); err == nil {
+			// Check if it's actually a file and not a directory
+			info, _ := os.Stat(filePath)
+			if !info.IsDir() {
+				http.ServeFile(w, r, filePath)
+				return
+			}
+		}
+		// Otherwise, serve index.html
+		http.ServeFile(w, r, "./frontend/dist/index.html")
+	})
 
 	server := &http.Server{
 		Addr:    ":" + port,

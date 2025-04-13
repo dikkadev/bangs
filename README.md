@@ -1,29 +1,32 @@
 # Bangs
 
-A lightweight and extensible search engine that leverages "bangs" to quickly redirect queries to your favorite services. Customize your search experience by defining your own bangs and effortlessly expand its capabilities.
+A lightweight and extensible search engine that leverages "bangs" to quickly redirect queries to your favorite services. Includes a web UI for browsing and searching available bangs. Customize your search experience by defining your own bangs and effortlessly expand its capabilities.
 
 ## Features
 
+- **Web UI**: Browse, filter, and search available bangs through a modern web interface.
 - **Customizable Bangs**: Define and manage your own bangs through a simple `bangs.yaml` configuration file.
-- **Flexible Query Handling**: Perform searches using query parameters or clean URL paths.
-- **Default Search Engine**: Specify a default search URL for queries without a bang (only works when using `q` query parameter).
-- **Public Instances**: Accessible via [https://bang.dikka.dev](https://bang.dikka.dev) and [https://s.dikka.dev](https://s.dikka.dev) with HTTPS support.
+- **Flexible Query Handling**: Perform searches using the `/bang?q=...` endpoint.
+- **Default Search Engine**: Specify a default search URL for queries without a bang (used by `/bang?q=...` when no bang is detected).
+- **Public Instances**: Accessible via [https://bang.dikka.dev](https://bang.dikka.dev) and [https://s.dikka.dev](https://s.dikka.dev) with HTTPS support (serving the web UI and handling bang redirects).
 - **Extensible & Open**: Contributions to expand and refine bang definitions are highly encouraged.
 - **Robust Testing**: Automated Go workflows ensure the correctness and reliability of bang URLs.
 - **Categorized Bangs**: Organize bangs into categories for better management and user experience.
 
 ## Public Instances
 
-Experience Bangs without any setup by using our public instances:
+Experience Bangs, including the web UI, without any setup by using our public instances:
 
 - **Primary Instance**: [https://bang.dikka.dev](https://bang.dikka.dev)
 - **Alternative Instance**: [https://s.dikka.dev](https://s.dikka.dev)
 
-Both URLs point to the same backend and support HTTPS for secure connections.
+Both URLs point to the same backend, serve the web UI at the root, handle bang redirection via `/bang`, and support HTTPS for secure connections.
 
 ## Installation
 
 ### Docker (Preferred)
+
+The Docker image includes the pre-built web UI and the Go backend.
 
 - **Docker Image**: Hosted on GitHub Container Registry (ghcr.io).
 - **Usage**: 
@@ -43,99 +46,96 @@ Both URLs point to the same backend and support HTTPS for secure connections.
       ports:
         - 8080:8080
       volumes:
-        - ./bangs.yaml:/app/bangs.yaml
+        - ./bangs.yaml:/app/bangs.yaml # Mount your bangs config
       environment:
         - BANGS_BANGFILE=/app/bangs.yaml
-        - BANGS_WATCH=true
+        - BANGS_WATCH=true # Optional: Reload bangs.yaml on change
+        # Add other BANGS_* environment variables as needed (see Command-Line Options below)
   ```
 
 ### Build from Source
 
-Ensure you have [Go](https://golang.org/dl/) installed (version 1.18 or later).
+Ensure you have [Go](https://golang.org/dl/) (version 1.21 or later) and [Bun](https://bun.sh/) installed.
 
-1. **Clone the Repository**
+1.  **Clone the Repository**
 
     ```bash
     git clone https://github.com/dikkadev/bangs.git
     cd bangs
     ```
 
-2. **Build the Application**
+2.  **Build the Frontend**
 
     ```bash
-    go build -o bangs ./cmd
+    cd frontend
+    bun install
+    bun run build
+    cd .. # Go back to the root directory
+    ```
+
+3.  **Build the Go Application**
+
+    ```bash
+    go build -o bangs .
     ```
 
 ## Usage
 
-### Usage Scenarios
+1.  **Start the Application**:
+    -   If built from source: `./bangs -b path/to/your/bangs.yaml`
+    -   If using Docker: Use `docker run` or `docker compose up` as shown in Installation.
 
-#### 1. Query-Based Search
+2.  **Access the Web UI**: Open your browser to `http://localhost:PORT` (e.g., `http://localhost:8080`). Here you can browse, search, and filter available bangs.
 
-Perform a search by specifying the bang and query as URL parameters using the public instance.
+3.  **Perform Bang Redirects**: Use the `/bang` endpoint with the `q` query parameter.
 
-**Example:**
+    **Example (GitHub Search):**
 
-```bash
-https://s.dikka.dev/?q=!gh dikkadev/bangs
-```
+    ```
+    http://localhost:8080/bang?q=!gh dikkadev/bangs
+    ```
 
-**Explanation:**  
-The above URL uses the `!gh` bang to perform a GitHub search for the repository `dikkadev/bangs`.
+    **Explanation:** The above URL uses the `!gh` bang to perform a GitHub search for the repository `dikkadev/bangs`.
 
-With query-based searches, you also have the option to omit the bang and use the default search engine defined in `bangs.yaml`. This is useful when you want to use bangs as the default search engine in your browser, so you do not need to specify a bang every time.
+    **Example (Default Search):**
 
-#### 2. Path-Based Search
+    If a `default` URL is defined in `bangs.yaml`, queries to `/bang?q=...` without a recognized bang prefix will use the default search engine.
 
-Perform a search by embedding the bang and query directly into the URL path using the public instance.
+    ```
+    http://localhost:8080/bang?q=OpenAI ChatGPT
+    ```
 
-**Example:**
+    **Example (Double Hashtag Search):**
 
-```bash
-https://s.dikka.dev/!gh/dikkadev/bangs
-```
+    Prefixing the query with `##` also forces the use of the default search engine.
 
-**Explanation:**  
-This URL achieves the same search as the query-based example but uses the path to specify the bang and query.
+    ```bash
+    http://localhost:8080/bang?q=##OpenAI ChatGPT
+    ```
 
-#### 3. Default Search
+4.  **API Endpoint:** The frontend uses the `/api/list` endpoint to fetch the available bangs data in JSON format.
 
-Perform a search without specifying a bang, which uses the default search engine.
+## Command-Line Options & Environment Variables
 
-**Example:**
+The application can be configured via command-line flags or corresponding environment variables.
 
-```bash
-https://s.dikka.dev/?q=OpenAI ChatGPT
-```
+| Flag            | Env Variable            | Description                                      | Default         | Example                  |
+|-----------------|-------------------------|--------------------------------------------------|-----------------|--------------------------|
+| `--bangs`       | `BANGS_BANGFILE`        | Path to the YAML file containing bang definitions. | *(Required)*    | `-b bangs.yaml`          |
+| `--port`        | `BANGS_PORT`            | Port on which the server will run.               | `8080`          | `-p 9090`                |
+| `--watch`       | `BANGS_WATCH`           | Reload bangs file on change.                     | `false`         | `-w`                     |
+| `--allow-no-bang`| `BANGS_ALLOW_NO_BANG`   | Allow `/bang` requests with no bang to be handled by default. | `false`         | `-a`                     |
+| `--ignore-char` | `BANGS_IGNORE_CHAR`     | Start `/bang` query with this char to ignore bangs. | `.`             | `-i ~`                   |
+| `--verbose`     | `BANGS_VERBOSE`         | Enable verbose debug logging.                    | `false`         | `-v`                     |
+| `--help`        |                         | Show help message.                               | `false`         | `-h`                     |
 
-**Explanation:**  
-The above URL uses the default search engine defined in `bangs.yaml` to search for "OpenAI ChatGPT".
+*Note: Environment variables take precedence over default values, and command-line flags take precedence over environment variables.* 
 
-#### 4. Double Hashtag Search
+## Configuration (`bangs.yaml`)
 
-Perform a search by typing a double hashtag `##` at the start of the query, which uses the default search engine.
+Bangs are defined in a `bangs.yaml` file. Each bang maps a unique *name* (used internally and in the UI) to its properties: `bang` characters, search `url` (with `{}` placeholder), `description`, and optional `category`.
 
-**Example:**
-
-```bash
-https://s.dikka.dev/?q=##OpenAI ChatGPT
-```
-
-**Explanation:**  
-The above URL uses the default search engine defined in `bangs.yaml` to search for "OpenAI ChatGPT" by stripping the `##` from the query.
-
-### Command-Line Options
-
-| Option          | Short | Description                                     | Default         | Example                  |
-|-----------------|-------|-------------------------------------------------|-----------------|--------------------------|
-| `--bangs`       | `-b`  | Path to the YAML file containing bang definitions. | `bangs.yaml`    | `-b path/to/your/bangs.yaml` |
-| `--port`        | `-p`  | Port on which the server will run.              | `8080`          | `-p 9090`                |
-| `--verbose`     | `-v`  | Enable verbose debug logging.                   | `false`         | `-v`                     |
-| `--help`        | `-h`  | Show help message.                              | `false`         | `-h`                     |
-
-## Configuration
-
-Bangs are defined in a `bangs.yaml` file. Each bang maps a unique identifier to a search URL containing a placeholder `{}` where the query will be inserted. Additionally, a `default` key can be specified to handle searches without a bang, and a `category` field can be used to organize bangs into groups.
+A `default` key at the root specifies the URL for queries without a bang.
 
 **Example `bangs.yaml`:**
 
@@ -146,13 +146,14 @@ default: 'https://www.google.com/search?q={}'
 # default: 'https://www.bing.com/search?q={}'
 # default: 'https://duckduckgo.com/?q={}'
 
+# Bang Definitions (Key is the name)
 GitHub:
   bang: 'gh'
   url: 'https://github.com/search?q={}'
   description: 'Search code repositories on GitHub'
   category: 'Development'
 
-g:
+Google:
   bang: "g"
   url: "https://www.google.com/search?q={}"
   description: 'Popular global search engine by Google.'
@@ -161,28 +162,32 @@ g:
 
 ## Setting Bangs as the Default Search Engine
 
-This capability varies based on your browser.
+You can configure your browser to use your running Bangs instance (local or public) as the default search engine. The exact method varies by browser, but generally involves setting the search URL to:
+
+`http://YOUR_INSTANCE_URL/bang?q=%s`
+
+Replace `YOUR_INSTANCE_URL` with the appropriate address (e.g., `localhost:8080`, `s.dikka.dev`).
 
 ### Chromium-Based Browsers
 
-[s.dikka.dev/g/chrome set default search engine](https://s.dikka.dev/g/chrome%20set%20default%20search%20engine)
+Search for adding a custom search engine in your browser's settings.
 
 ### Firefox
 
-[s.dikka.dev/g/firefox set default search engine](https://s.dikka.dev/g/firefox%20set%20default%20search%20engine)
+Requires an extension like "Add custom search engine".
 
 ## Advanced Usage
 
-Enhance your Bangs experience with advanced configurations and persistent setups. For detailed instructions, please refer to the [Advanced Usage](./ADVANCED.md) guide.
+For details on advanced configurations and persistent setups, please refer to the [Advanced Usage](./ADVANCED.md) guide.
 
 ## Contributing
 
-Contributions are highly welcome! If you have new bangs to add or improvements to the existing ones, feel free to submit a pull request to the `bangs.yaml` file.
+Contributions are highly welcome! If you have new bangs to add or improvements to the existing ones, feel free to submit a pull request modifying the `bangs.yaml` file.
 
 ### How to Contribute
 
 - **Branch Naming**: Please name your feature branches in the format `bang/{chars}`, where `{chars}` represents the bang characters (e.g., `bang/y`, `bang/gh`).
-- **Adding Bangs**: Ensure your new bang is placed in the appropriate section within `bangs.yaml`.
+- **Adding Bangs**: Add a new entry to `bangs.yaml` using a descriptive name as the key. Ensure it's placed logically, potentially within an existing category.
 - **Non-Search Bangs**: If your contribution is not a search-related bang, please explain the use case clearly in your pull request description.
 - **Follow Templates**: There are issue and PR templates in place to guide your contributions. Please follow them.
 
@@ -199,34 +204,6 @@ go test ./...
 ### Continuous Integration
 
 Every pull request triggers the Go test workflow to ensure that new contributions do not break existing functionality and that all bang URLs remain valid.
-
-## Docker
-
-### Installation and Running with Docker
-
-- **Docker Image**: Hosted on GitHub Container Registry (ghcr.io).
-- **Usage**: 
-
-  ```bash
-  docker run -d -p 8080:8080 -v ./bangs.yaml:/app/bangs.yaml -e BANGS_BANGFILE=/app/bangs.yaml ghcr.io/dikkadev/bangs:latest
-  ```
-
-  Or use with Docker Compose:
-
-  ```yaml
-  services:
-    bangs:
-      image: ghcr.io/dikkadev/bangs:latest
-      restart: unless-stopped
-      pull_policy: always
-      ports:
-        - 8080:8080
-      volumes:
-        - ./bangs.yaml:/app/bangs.yaml
-      environment:
-        - BANGS_BANGFILE=/app/bangs.yaml
-        - BANGS_WATCH=true
-  ```
 
 ## License
 
