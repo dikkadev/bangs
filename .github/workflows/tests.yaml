@@ -14,18 +14,34 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: '1.23' # As to be >= 1.22 because of for loop variable capturing
 
-      - name: Install dependencies
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Match Dockerfile Node version
+
+      - name: Install bun
+        run: npm install -g bun
+
+      - name: Install frontend dependencies
+        working-directory: ./frontend # Specify working directory for frontend steps
+        run: bun install
+
+      - name: Build frontend
+        working-directory: ./frontend
+        run: bun run build
+
+      - name: Install Go dependencies
         run: go mod tidy
 
       - name: Run normal tests
-        run: go test -v ./... 
+        run: go test -v ./...
 
       - name: Run forwarding tests
         continue-on-error: true
