@@ -90,31 +90,29 @@ func searchByQuery(w http.ResponseWriter, r *http.Request) {
 }
 
 func searchByPath(w http.ResponseWriter, r *http.Request) {
-	bang := r.URL.Query().Get("bang")
-	bang = strings.TrimSpace(bang)
-	if len(bang) == 0 {
-		msg := "No bang provided for search"
+	// Extract bang and query from path segments
+	bang := r.PathValue("bang")
+	if bang == "" {
+		msg := "No bang provided in path"
 		slog.Error(msg, "url", r.URL)
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
 
-	query := r.URL.Query().Get("query")
-	query = strings.TrimSpace(query)
-	if len(query) == 0 {
-		msg := "No query provided for search"
-		slog.Error(msg, "url", r.URL)
-		http.Error(w, msg, http.StatusBadRequest)
-		return
-	}
+	// PathValue automatically decodes the path segment
+	query := r.PathValue("query")
+	// query can be empty if the path is just /bang/
 
 	entry, ok := registry.Entries.byBang[bang]
 	if !ok {
+		// If bang is not found, try default forward if allowed?
+		// Current logic: return 404
 		msg := fmt.Sprintf("Unknown bang: '%s'", bang)
-		slog.Error(msg, "url", r.URL)
+		slog.Debug(msg, "url", r.URL)
 		http.Error(w, msg, http.StatusNotFound)
 		return
 	}
 
+	slog.Debug("Forwarding search by path", "bang", bang, "query", query)
 	_ = entry.Forward(query, w, r)
 }

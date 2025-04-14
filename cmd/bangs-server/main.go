@@ -1,9 +1,9 @@
 package main
 
 import (
-	"bangs/internal/watcher"
-	"bangs/pkg/bangs"
-	"embed"
+	"bangs/internal/watcher" // Will need adjustment based on final project structure
+	"bangs/pkg/bangs"        // Will need adjustment based on final project structure
+	"bangs/web"              // Add import for the new web package
 	"fmt"
 	"io"
 	"io/fs"
@@ -18,8 +18,8 @@ import (
 	flag "github.com/spf13/pflag"
 )
 
-//go:embed all:frontend/dist
-var embeddedFrontend embed.FS
+// //go:embed all:../../frontend/dist
+// var embeddedFrontend embed.FS
 
 var version = "dev"
 
@@ -111,12 +111,14 @@ func main() {
 
 	// --- Serve Frontend from Embedded Filesystem ---
 
-	// Create a sub-filesystem rooted at "frontend/dist"
-	frontendFS, err := fs.Sub(embeddedFrontend, "frontend/dist")
+	// Get the embedded frontend filesystem from the web package
+	frontendFS, err := web.FrontendFS()
 	if err != nil {
-		slog.Error("Failed to create sub VFS for frontend", "err", err)
+		slog.Error("Failed to get embedded frontend filesystem", "err", err)
 		os.Exit(1)
 	}
+
+	// Create a file server for the frontend assets
 	frontendFileServer := http.FileServer(http.FS(frontendFS))
 
 	// Serve static assets (/assets, /favicon.ico, etc.)
@@ -160,12 +162,20 @@ func main() {
 
 	// --- API and Bang Handlers ---
 
-	// API endpoints (like listing bangs)
-	apiHandler := bangs.Handler(false, ".") // Create a handler instance for API routes
-	mainRouter.Handle("/api/", http.StripPrefix("/api", apiHandler))
+	// Create the bang handler (which includes API like /list and bang searches)
+	bangHandler := bangs.Handler(allowNoBang, ignoreChar)
 
-	// Handle bang redirection logic at /bang
-	mainRouter.Handle("/bang", bangs.Handler(allowNoBang, ignoreChar))
+	// Mount the bang handler under /bang/
+	// http.StripPrefix removes /bang before forwarding to bangHandler
+	mainRouter.Handle("/bang/", http.StripPrefix("/bang", bangHandler))
+
+	// Note: The previous /api/ route might be redundant now if bangs.Handler serves it internally.
+	// Let's keep it for now, but it could potentially be removed if /bang/list works.
+	// apiHandler := bangs.Handler(false, ".") // Create a handler instance for API routes
+	// mainRouter.Handle("/api/", http.StripPrefix("/api", apiHandler))
+
+	// Remove the old specific GET /bang handler
+	// mainRouter.Handle("GET /bang", bangs.Handler(allowNoBang, ignoreChar))
 
 	// --- Start Server ---
 
