@@ -13,7 +13,7 @@ export default function Home() {
 
       {/* Background grid */}
       <div
-        className="fixed inset-0 opacity-20 pointer-events-none z-5"
+        className="fixed inset-0 opacity-45 pointer-events-none z-5"
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fill, minmax(50px, 1fr))",
