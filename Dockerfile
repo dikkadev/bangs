@@ -27,7 +27,7 @@ RUN go mod download
 COPY . .
 
 # Copy built frontend from the previous stage into the correct location for embedding
-COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
+COPY --from=frontend-builder /app/frontend/dist ./web/frontend/dist
 
 # Build the Go application (which now embeds the frontend)
 RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -ldflags "-X main.version=$VERSION" -o bangs cmd/bangs-server/main.go
