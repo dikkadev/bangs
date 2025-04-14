@@ -30,7 +30,7 @@ jobs:
         run: npm install -g bun
 
       - name: Install frontend dependencies
-        working-directory: ./frontend # Specify working directory for frontend steps
+        working-directory: frontend
         run: bun install
 
       - name: Build frontend

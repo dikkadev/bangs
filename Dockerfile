@@ -2,7 +2,7 @@ FROM --platform=$BUILDPLATFORM node:20 AS frontend-builder
 WORKDIR /app
 
 # Copy frontend source code
-COPY frontend/ ./frontend/
+COPY web/frontend/ ./frontend/
 
 WORKDIR /app/frontend
 
@@ -30,7 +30,7 @@ COPY . .
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
 # Build the Go application (which now embeds the frontend)
-RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -ldflags "-X main.version=$VERSION" -o bangs .
+RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -ldflags "-X main.version=$VERSION" -o bangs cmd/bangs-server/main.go
 
 # --- Final Stage ---
 FROM alpine:latest
