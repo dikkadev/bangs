@@ -32,11 +32,11 @@ export function Search({ query, onQueryChange }: SearchProps) {
       const bang = parts[0]
       const searchTerm = parts.slice(1).join(" ")
 
-      // Target the public instance with the bang
-      targetUrl = `https://s.dikka.dev/?q=${encodeURIComponent(bang + " " + searchTerm)}`
+      // Target the local /bang endpoint with the bang
+      targetUrl = `/bang?q=${encodeURIComponent(bang + " " + searchTerm)}`
     } else {
-      // Use default search
-      targetUrl = `https://s.dikka.dev/?q=${encodeURIComponent(query)}`
+      // Target the local /bang endpoint for default search
+      targetUrl = `/bang?q=${encodeURIComponent(query)}`
     }
 
     // Open in new tab

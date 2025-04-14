@@ -68,7 +68,7 @@ export function BangsList({ mainQuery }: BangsListProps) { // Destructure props
   useEffect(() => {
     const fetchBangs = async () => {
       try {
-        const response = await fetch("/api/list")
+        const response = await fetch("/bang/list")
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
