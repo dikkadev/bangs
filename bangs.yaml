@@ -293,6 +293,12 @@ SoundCloud:
   description: 'Music streaming and sharing platform'
   category: 'Entertainment'
 
+WerStreamtEs:
+  bang: 'wses'
+  url: 'https://www.werstreamt.es/filme-serien/?q={}'
+  description: 'Find where to stream movies and series'
+  category: 'Entertainment'
+
 # ================================================================================ 
 # Shopping
 # ================================================================================ 
