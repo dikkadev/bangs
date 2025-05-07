@@ -8,19 +8,18 @@ A lightweight and extensible search engine that leverages "bangs" to quickly red
 - **Customizable Bangs**: Define and manage your own bangs through a simple `bangs.yaml` configuration file.
 - **Flexible Query Handling**: Perform searches using the `/bang?q=...` endpoint.
 - **Default Search Engine**: Specify a default search URL for queries without a bang (used by `/bang?q=...` when no bang is detected).
-- **Public Instances**: Accessible via [https://bang.dikka.dev](https://bang.dikka.dev) and [https://s.dikka.dev](https://s.dikka.dev) with HTTPS support (serving the web UI and handling bang redirects).
+- **Public Instances**: Accessible via [https://s.dikka.dev](https://s.dikka.dev) and [https://s.dikka.dev](https://s.dikka.dev) with HTTPS support (serving the web UI and handling bang redirects).
 - **Extensible & Open**: Contributions to expand and refine bang definitions are highly encouraged.
 - **Robust Testing**: Automated Go workflows ensure the correctness and reliability of bang URLs.
 - **Categorized Bangs**: Organize bangs into categories for better management and user experience.
 
 ## Public Instances
 
-Experience Bangs, including the web UI, without any setup by using our public instances:
+Experience Bangs, including the web UI, without any setup by using our public instance:
 
-- **Primary Instance**: [https://bang.dikka.dev](https://bang.dikka.dev)
-- **Alternative Instance**: [https://s.dikka.dev](https://s.dikka.dev)
+- **Primary Instance**: [https://s.dikka.dev](https://s.dikka.dev)
 
-Both URLs point to the same backend, serve the web UI at the root, handle bang redirection via `/bang`, and support HTTPS for secure connections.
+The URL serves the web UI at the root, handles bang redirection via `/bang`, and supports HTTPS for secure connections.
 
 ## Installation
 

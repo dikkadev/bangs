@@ -38,7 +38,7 @@ export default function Home() {
             <p className="text-gray-400 text-sm text-center mb-8">Redirect searches to your favorite services</p>
             <div className="flex gap-4 mt-4">
               <a
-                href="https://github.com/Sett17/bangs"
+                href="https://github.com/dikkadev/bangs"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white transition-colors"
@@ -47,7 +47,7 @@ export default function Home() {
                 <GithubIcon className="w-5 h-5" />
               </a>
               <a
-                href="https://bang.dikka.dev"
+                href="https://s.dikka.dev"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white transition-colors"

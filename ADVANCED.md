@@ -100,7 +100,7 @@ After setting up the host entry, you can access your local Bangs server using:
 
 
 ```
-http://bangs/?q=!gh Sett17/bangs'
+http://bangs/?q=!gh dikkadev/bangs'
 ```
 
 ## 2. Run Bangs as a Persistent Service
@@ -132,7 +132,7 @@ Use `launchd` to create a persistent service:
 1. **Create a Launch Agent File**
 
     ```bash
-    vim ~/Library/LaunchAgents/com.sett17.bangs.plist
+    vim ~/Library/LaunchAgents/com.dikkadev.bangs.plist
     ```
 
 2. **Add Configuration**
@@ -145,7 +145,7 @@ Use `launchd` to create a persistent service:
     <plist version="1.0">
       <dict>
         <key>Label</key>
-        <string>com.sett17.bangs</string>
+        <string>com.dikkadev.bangs</string>
         <key>ProgramArguments</key>
         <array>
           <string>/path/to/bangs</string>
@@ -171,7 +171,7 @@ Use `launchd` to create a persistent service:
 3. **Load the Launch Agent**
 
     ```bash
-    launchctl load ~/Library/LaunchAgents/com.sett17.bangs.plist
+    launchctl load ~/Library/LaunchAgents/com.dikkadev.bangs.plist
     ```
 
 ### **Linux**
