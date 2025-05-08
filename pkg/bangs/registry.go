@@ -20,6 +20,7 @@ type Registry struct {
 
 var allowNoBang = false
 var ignoreChar = "."
+var allowMultiBang = false
 
 func Load(path string) error {
 	data, err := os.ReadFile(path)
@@ -164,7 +165,7 @@ func (InputStartsWithIgnoreError) Error() string {
 	return "input starts with ignore character"
 }
 
-func (bl BangList) PrepareInput(input string) (*Entry, string, error) {
+func (bl BangList) PrepareInputOld(input string) (*Entry, string, error) {
 	if !allowNoBang && len(input) < 2 {
 		return nil, "", fmt.Errorf("len(query) was smaller than 2, which is not valid")
 	}
@@ -202,6 +203,58 @@ func (bl BangList) PrepareInput(input string) (*Entry, string, error) {
 		return nil, "", fmt.Errorf("unknown bang: '%s'", bang)
 	}
 	return &entry, query, nil
+}
+
+func (bl BangList) PrepareInput(input string) ([]*Entry, string, error) {
+	entries := make([]*Entry, 0)
+	if !allowNoBang && len(input) < 2 {
+		return nil, "", fmt.Errorf("len(query) was smaller than 2, which is not valid")
+	}
+	if input[0] == ignoreChar[0] {
+		return nil, "", InputStartsWithIgnoreError(input)
+	}
+	bangOffset := 1
+	if input[0] != '!' {
+		if !allowNoBang {
+			return nil, "", InputHasNoBangError(input)
+		}
+		bangOffset = 0
+	}
+
+	split := strings.SplitN(input[bangOffset:], " ", 2)
+	if !allowNoBang && len(split) != 2 {
+		return nil, "", fmt.Errorf("query does not contain a bang and a query")
+	}
+
+	var (
+		rawBang, query string
+	)
+	if len(split) == 1 {
+		query = split[0]
+	} else {
+		rawBang, query = split[0], split[1]
+	}
+
+	bangs := make([]string, 0)
+	if strings.ContainsRune(rawBang, '+') {
+		bangs = strings.Split(rawBang, "+")
+	} else {
+		bangs = append(bangs, rawBang)
+	}
+	slog.Debug("Parsed bangs", "bangs", bangs)
+
+	for _, bang := range bangs {
+		entry, ok := bl.byBang[bang]
+		if !ok {
+			if allowNoBang {
+				return nil, "", InputHasNoBangError(input)
+			}
+
+			return nil, "", fmt.Errorf("unknown bang: '%s'", bang)
+		}
+		entries = append(entries, &entry)
+	}
+	return entries, query, nil
 }
 
 // Benchmarked; lookup in precomputed map is faster even in smaller cases
