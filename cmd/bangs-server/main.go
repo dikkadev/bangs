@@ -48,6 +48,7 @@ func main() {
 	portDefault := getEnv("BANGS_PORT", "8080")
 	watchBangFileDefault := getEnvBool("BANGS_WATCH", false)
 	allowNoBangDefault := getEnvBool("BANGS_ALLOW_NO_BANG", false)
+	allowMultiBangDefault := getEnvBool("BANGS_ALLOW_MULTI_BANG", false)
 	ignoreCharDefault := getEnv("BANGS_IGNORE_CHAR", ".")
 
 	var bangsFile string
@@ -67,6 +68,9 @@ func main() {
 
 	var allowNoBang bool
 	flag.BoolVarP(&allowNoBang, "allow-no-bang", "a", allowNoBangDefault, "Allow requests with no bang to be handled as if they have a bang")
+
+	var allowMultiBang bool
+	flag.BoolVarP(&allowMultiBang, "allow-multi-bang", "m", allowMultiBangDefault, "Allow multiple bangs in a single request")
 
 	var ignoreChar string
 	flag.StringVarP(&ignoreChar, "ignore-char", "i", ignoreCharDefault, "Start with this character to ignore bangs (only uses first character of the string)")
@@ -160,24 +164,12 @@ func main() {
 		http.ServeContent(w, r, "index.html", info.ModTime(), index.(io.ReadSeeker))
 	})
 
-	// --- API and Bang Handlers ---
-
 	// Create the bang handler (which includes API like /list and bang searches)
-	bangHandler := bangs.Handler(allowNoBang, ignoreChar)
+	bangHandler := bangs.Handler(allowNoBang, allowMultiBang, ignoreChar)
 
 	// Mount the bang handler under /bang/
 	// http.StripPrefix removes /bang before forwarding to bangHandler
 	mainRouter.Handle("/bang/", http.StripPrefix("/bang", bangHandler))
-
-	// Note: The previous /api/ route might be redundant now if bangs.Handler serves it internally.
-	// Let's keep it for now, but it could potentially be removed if /bang/list works.
-	// apiHandler := bangs.Handler(false, ".") // Create a handler instance for API routes
-	// mainRouter.Handle("/api/", http.StripPrefix("/api", apiHandler))
-
-	// Remove the old specific GET /bang handler
-	// mainRouter.Handle("GET /bang", bangs.Handler(allowNoBang, ignoreChar))
-
-	// --- Start Server ---
 
 	server := &http.Server{
 		Addr:    ":" + port,

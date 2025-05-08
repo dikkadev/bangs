@@ -180,30 +180,6 @@ Requires an extension like "Add custom search engine".
 
 For details on advanced configurations and persistent setups, please refer to the [Advanced Usage](./ADVANCED.md) guide.
 
-## Contributing
-
-Contributions are highly welcome! If you have new bangs to add or improvements to the existing ones, feel free to submit a pull request modifying the `bangs.yaml` file.
-
-### How to Contribute
-
-- **Branch Naming**: Please name your feature branches in the format `bang/{chars}`, where `{chars}` represents the bang characters (e.g., `bang/y`, `bang/gh`).
-- **Adding Bangs**: Add a new entry to `bangs.yaml` using a descriptive name as the key. Ensure it's placed logically, potentially within an existing category.
-- **Non-Search Bangs**: If your contribution is not a search-related bang, please explain the use case clearly in your pull request description.
-- **Follow Templates**: There are issue and PR templates in place to guide your contributions. Please follow them.
-
-## Testing
-
-The project includes a comprehensive Go test workflow that not only checks the functionality of the application but also validates the correctness of all bang URLs defined in `bangs.yaml`.
-
-### Running Tests Locally
-
-```bash
-go test ./...
-```
-
-### Continuous Integration
-
-Every pull request triggers the Go test workflow to ensure that new contributions do not break existing functionality and that all bang URLs remain valid.
 
 ## License
 

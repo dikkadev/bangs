@@ -13,15 +13,15 @@ import (
 	"github.com/dikkadev/prettyslog"
 )
 
-func Handler(doAllowNoBang bool, ignoreCharPar string) http.Handler {
+func Handler(doAllowNoBang bool, doAllowMultiBang bool, ignoreCharPar string) http.Handler {
 	allowNoBang = doAllowNoBang
 	ignoreChar = ignoreCharPar
+	allowMultiBang = doAllowMultiBang
 
 	router := http.NewServeMux()
 
 	router.HandleFunc("/list", listAll)
 	router.HandleFunc("/", searchByQuery)
-	router.HandleFunc("/{bang}/{query...}", searchByPath)
 
 	logOptions := make([]prettyslog.Option, 0)
 	if slog.Default().Enabled(context.Background(), slog.LevelDebug) {
@@ -50,6 +50,48 @@ func listAll(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func openMultiWithJS(w http.ResponseWriter, r *http.Request, entries []*Entry, query string) {
+	if len(entries) > 2 {
+		slog.Warn("More than 2 entries found, can only use the first and last")
+	}
+
+	w.Header().Set("Content-Type", "text/html")
+	urls := make([]string, len(entries))
+	for i, entry := range entries {
+		u, err := entry.URL.Augment(query)
+		if err != nil {
+			slog.Error("Error augmenting URL", "err", err)
+			if _, ok := err.(AugmentNoPlaceholderError); ok {
+				http.Error(w, "No placeholder found in path, query, or fragment", http.StatusBadRequest)
+			} else {
+				http.Error(w, fmt.Sprintf("Error augmenting URL: %v", err), http.StatusInternalServerError)
+			}
+			return
+		}
+		urls[i] = u.String()
+	}
+
+	newTab := fmt.Sprintf("window.open('%s', '_blank');\n", urls[len(urls)-1])
+
+	hypertext := fmt.Sprintf(`
+<html>
+<head>
+</head>
+<body>
+<script>
+%s
+window.location.href = "%s";
+</script>
+</body>
+</html>
+	`,
+		newTab,
+		urls[:1][0],
+	)
+
+	w.Write([]byte(hypertext))
+}
+
 func searchByQuery(w http.ResponseWriter, r *http.Request) {
 	queries := r.URL.Query()
 	q := queries.Get("q")
@@ -67,7 +109,13 @@ func searchByQuery(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	entry, query, err := registry.Entries.PrepareInput(q)
+	entries, query, err := registry.Entries.PrepareInput(q)
+	if len(entries) > 1 {
+		openMultiWithJS(w, r, entries, query)
+		return
+	}
+
+	entry := entries[0]
 	if err != nil {
 		if _, ok := err.(InputHasNoBangError); ok {
 			slog.Debug("No bang found in input, forwarding to default", "query", q)
@@ -85,34 +133,5 @@ func searchByQuery(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("Error preparing input: %v", err), http.StatusBadRequest)
 		return
 	}
-
-	_ = entry.Forward(query, w, r)
-}
-
-func searchByPath(w http.ResponseWriter, r *http.Request) {
-	// Extract bang and query from path segments
-	bang := r.PathValue("bang")
-	if bang == "" {
-		msg := "No bang provided in path"
-		slog.Error(msg, "url", r.URL)
-		http.Error(w, msg, http.StatusBadRequest)
-		return
-	}
-
-	// PathValue automatically decodes the path segment
-	query := r.PathValue("query")
-	// query can be empty if the path is just /bang/
-
-	entry, ok := registry.Entries.byBang[bang]
-	if !ok {
-		// If bang is not found, try default forward if allowed?
-		// Current logic: return 404
-		msg := fmt.Sprintf("Unknown bang: '%s'", bang)
-		slog.Debug(msg, "url", r.URL)
-		http.Error(w, msg, http.StatusNotFound)
-		return
-	}
-
-	slog.Debug("Forwarding search by path", "bang", bang, "query", query)
 	_ = entry.Forward(query, w, r)
 }
