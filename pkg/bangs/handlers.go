@@ -115,7 +115,6 @@ func searchByQuery(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	entry := entries[0]
 	if err != nil {
 		if _, ok := err.(InputHasNoBangError); ok {
 			slog.Debug("No bang found in input, forwarding to default", "query", q)
@@ -133,5 +132,6 @@ func searchByQuery(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("Error preparing input: %v", err), http.StatusBadRequest)
 		return
 	}
+	entry := entries[0]
 	_ = entry.Forward(query, w, r)
 }
