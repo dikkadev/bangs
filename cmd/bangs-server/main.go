@@ -113,37 +113,33 @@ func main() {
 
 	mainRouter := http.NewServeMux()
 
-	// --- Serve Frontend from Embedded Filesystem ---
+	bangHandler := bangs.Handler(allowNoBang, allowMultiBang, ignoreChar)
 
-	// Get the embedded frontend filesystem from the web package
+	mainRouter.Handle("/bang/", http.StripPrefix("/bang", bangHandler))
+
 	frontendFS, err := web.FrontendFS()
 	if err != nil {
 		slog.Error("Failed to get embedded frontend filesystem", "err", err)
 		os.Exit(1)
 	}
 
-	// Create a file server for the frontend assets
 	frontendFileServer := http.FileServer(http.FS(frontendFS))
 
-	// Serve static assets (/assets, /favicon.ico, etc.)
 	mainRouter.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		// Clean the path to prevent traversal issues within the embedded FS
-		// Although less critical now, it's good practice.
+		if r.URL.Query().Get("q") != "" {
+			bangHandler.ServeHTTP(w, r)
+			return
+		}
+
 		path := filepath.Clean(r.URL.Path)
 
-		// Check if the requested path (excluding '/') corresponds to a file
-		// in the embedded FS. We check paths like /assets/..., /favicon.ico
 		if path != "/" {
-			// fs.Stat needs a path without the leading slash
 			if _, err := fs.Stat(frontendFS, strings.TrimPrefix(path, "/")); err == nil {
 				frontendFileServer.ServeHTTP(w, r)
 				return
 			}
 		}
 
-		// If it's the root path or the file wasn't found, serve index.html
-		// We need to manually open and serve index.html because http.FileServer
-		// doesn't automatically serve index.html for directories in embedded FS.
 		index, err := frontendFS.Open("index.html")
 		if err != nil {
 			slog.Error("Failed to open embedded index.html", "err", err)
@@ -152,7 +148,6 @@ func main() {
 		}
 		defer index.Close()
 
-		// Get file info for headers (optional but good)
 		info, err := index.Stat()
 		if err != nil {
 			slog.Error("Failed to stat embedded index.html", "err", err)
@@ -160,16 +155,8 @@ func main() {
 			return
 		}
 
-		// Serve the index.html content
 		http.ServeContent(w, r, "index.html", info.ModTime(), index.(io.ReadSeeker))
 	})
-
-	// Create the bang handler (which includes API like /list and bang searches)
-	bangHandler := bangs.Handler(allowNoBang, allowMultiBang, ignoreChar)
-
-	// Mount the bang handler under /bang/
-	// http.StripPrefix removes /bang before forwarding to bangHandler
-	mainRouter.Handle("/bang/", http.StripPrefix("/bang", bangHandler))
 
 	server := &http.Server{
 		Addr:    ":" + port,
