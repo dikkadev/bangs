@@ -163,7 +163,8 @@ Kaggle:
 # ================================================================================ 
 Wikipedia:
   bang: 'w'
-  url: 'https://en.wikipedia.org/wiki/{}'
+  # url: 'https://en.wikipedia.org/wiki/{}'
+  url: 'https://en.wikipedia.org/w/index.php?fulltext=1&search={}'
   description: 'Online encyclopedia'
   category: 'Reference'
 
