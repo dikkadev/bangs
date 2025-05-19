@@ -175,6 +175,10 @@ Search for adding a custom search engine in your browser's settings.
 
 Requires an extension like "Add custom search engine".
 
+### Pop-up / Redirect Settings
+
+Multiple bangs (e.g., chaining multiple bangs in one query) open separate tabs or pop-up windows by design, which may be blocked by default. To ensure multibangs work as expected, allow pop-ups/redirects for your Bangs instance domain (e.g., `https://s.dikka.dev`) in your browser settings. Refer to your browser’s documentation for instructions on enabling pop-ups or redirects if needed.
+
 ## Advanced Usage
 
 For details on advanced configurations and persistent setups, please refer to the [Advanced Usage](./ADVANCED.md) guide.
