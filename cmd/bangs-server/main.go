@@ -47,7 +47,7 @@ func main() {
 	debugLogsDefault := getEnvBool("BANGS_VERBOSE", false)
 	portDefault := getEnv("BANGS_PORT", "8080")
 	watchBangFileDefault := getEnvBool("BANGS_WATCH", false)
-	allowNoBangDefault := getEnvBool("BANGS_ALLOW_NO_BANG", false)
+	allowNoBangDefault := getEnvBool("BANGS_ALLOW_NO_BANG", true)
 	allowMultiBangDefault := getEnvBool("BANGS_ALLOW_MULTI_BANG", false)
 	ignoreCharDefault := getEnv("BANGS_IGNORE_CHAR", ".")
 

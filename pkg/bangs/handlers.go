@@ -51,10 +51,6 @@ func listAll(w http.ResponseWriter, r *http.Request) {
 }
 
 func openMultiWithJS(w http.ResponseWriter, r *http.Request, entries []*Entry, query string) {
-	if len(entries) > 2 {
-		slog.Warn("More than 2 entries found, can only use the first and last")
-	}
-
 	w.Header().Set("Content-Type", "text/html")
 	urls := make([]string, len(entries))
 	for i, entry := range entries {
@@ -71,7 +67,12 @@ func openMultiWithJS(w http.ResponseWriter, r *http.Request, entries []*Entry, q
 		urls[i] = u.String()
 	}
 
-	newTab := fmt.Sprintf("window.open('%s', '_blank');\n", urls[len(urls)-1])
+	// Generate JavaScript to open ALL tabs except the first one
+	var newTabCommands []string
+	for i := 1; i < len(urls); i++ {
+		newTabCommands = append(newTabCommands, fmt.Sprintf("window.open('%s', '_blank');", urls[i]))
+	}
+	newTabsJS := strings.Join(newTabCommands, "\n")
 
 	hypertext := fmt.Sprintf(`
 <html>
@@ -85,8 +86,8 @@ window.location.href = "%s";
 </body>
 </html>
 	`,
-		newTab,
-		urls[:1][0],
+		newTabsJS,
+		urls[0],
 	)
 
 	w.Write([]byte(hypertext))
