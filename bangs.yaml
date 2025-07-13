@@ -1,8 +1,16 @@
-default: 'https://www.google.com/search?q={}'
+# Default can be a URL, single bang, or multi-bang combination
+# URL default:
+# default: 'https://www.google.com/search?q={}'
 
-# Other search engines:
-# default: 'https://www.bing.com/search?q={}'
-# default: 'https://duckduckgo.com/?q={}'
+# Single bang reference:
+default: 'g'
+
+# Multi-bang reference (opens multiple tabs):
+# default: 'ai+g'        # AI search + Google
+
+# Other examples:
+# default: 'g+gh+so'     # Google + GitHub + StackOverflow
+# default: 'ddg'         # Just DuckDuckGo
 
 # ================================================================================ 
 # Search Engines

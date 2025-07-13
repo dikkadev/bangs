@@ -99,7 +99,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	err := bangs.Load("bangs.yaml")
+	err := bangs.Load(bangsFile)
 	if err != nil {
 		slog.Error("Error loading bangs", "err", err)
 		return

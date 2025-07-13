@@ -53,6 +53,15 @@ func Load(path string) error {
 }
 
 func (r *Registry) DefaultForward(query string, w http.ResponseWriter, req *http.Request) error {
+	defaultStr := string(r.Default)
+
+	// Check if default is a bang reference (doesn't contain ://)
+	if !strings.Contains(defaultStr, "://") {
+		// Handle as bang reference(s)
+		return r.handleDefaultBangReferences(defaultStr, query, w, req)
+	}
+
+	// Handle as traditional URL
 	u, err := r.Default.Augment(query)
 	if err != nil {
 		slog.Error("Error augmenting URL", "err", err)
@@ -66,6 +75,41 @@ func (r *Registry) DefaultForward(query string, w http.ResponseWriter, req *http
 
 	http.Redirect(w, req, u.String(), http.StatusFound)
 	return nil
+}
+
+func (r *Registry) handleDefaultBangReferences(defaultStr, query string, w http.ResponseWriter, req *http.Request) error {
+	// Parse bang references (support multi-bang with +)
+	bangRefs := strings.Split(defaultStr, "+")
+	entries := make([]*Entry, 0, len(bangRefs))
+
+	// Resolve each bang reference to an Entry
+	for _, bangRef := range bangRefs {
+		bangRef = strings.TrimSpace(bangRef)
+		if bangRef == "" {
+			continue
+		}
+
+		entry, exists := r.Entries.byBang[bangRef]
+		if !exists {
+			slog.Error("Default bang reference not found", "bang", bangRef)
+			http.Error(w, fmt.Sprintf("Default bang reference '%s' not found", bangRef), http.StatusInternalServerError)
+			return fmt.Errorf("default bang reference '%s' not found", bangRef)
+		}
+		entries = append(entries, &entry)
+	}
+
+	if len(entries) == 0 {
+		http.Error(w, "No valid bang references found in default", http.StatusInternalServerError)
+		return fmt.Errorf("no valid bang references found in default")
+	}
+
+	// Handle single vs multi-bang
+	if len(entries) == 1 {
+		// Single bang - direct redirect
+		return entries[0].Forward(query, w, req)
+	}
+
+	return generateMultiTabHTML(entries, query, w)
 }
 
 func diffRegistry(oldRegistry, newRegistry *Registry) {
@@ -105,7 +149,7 @@ type BangList struct {
 }
 
 func (bl *BangList) UnmarshalYAML(value *yaml.Node) error {
-	var tempMap map[string]interface{}
+	var tempMap map[string]any
 	err := value.Decode(&tempMap)
 	if err != nil {
 		return err
@@ -115,7 +159,7 @@ func (bl *BangList) UnmarshalYAML(value *yaml.Node) error {
 	bl.Entries = make(map[string]Entry, len(tempMap))
 	bl.byBang = make(map[string]Entry, len(tempMap))
 	for k, a := range tempMap {
-		v := a.(map[string]interface{})
+		v := a.(map[string]any)
 		bangChars, ok := v["bang"].(string)
 		if !ok {
 			return fmt.Errorf("missing bang field for entry '%s'", k)
