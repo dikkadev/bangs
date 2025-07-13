@@ -2,3 +2,4 @@ bangs.yaml
 Makefile
 tmp
 pkg/bangs/bench.sh
+.opencode

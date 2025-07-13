@@ -7,7 +7,8 @@ A lightweight and extensible search engine that leverages "bangs" to quickly red
 - **Web UI**: Browse, filter, and search available bangs through a modern web interface.
 - **Customizable Bangs**: Define and manage your own bangs through a simple `bangs.yaml` configuration file.
 - **Flexible Query Handling**: Perform searches using the `/bang?q=...` endpoint.
-- **Default Search Engine**: Specify a default search URL for queries without a bang (used by `/bang?q=...` when no bang is detected).
+- **Flexible Default Search**: Specify a default as a URL, single bang, or multi-bang combination (e.g., `g+gh` opens both Google and GitHub).
+- **Multi-Bang Support**: Use `+` to combine bangs (e.g., `!g+gh+so query` opens Google, GitHub, and StackOverflow).
 - **Public Instances**: Accessible via [https://s.dikka.dev](https://s.dikka.dev) and [https://s.dikka.dev](https://s.dikka.dev) with HTTPS support (serving the web UI and handling bang redirects).
 - **Extensible & Open**: Contributions to expand and refine bang definitions are highly encouraged.
 - **Robust Testing**: Automated Go workflows ensure the correctness and reliability of bang URLs.
@@ -134,16 +135,24 @@ The application can be configured via command-line flags or corresponding enviro
 
 Bangs are defined in a `bangs.yaml` file. Each bang maps a unique *name* (used internally and in the UI) to its properties: `bang` characters, search `url` (with `{}` placeholder), `description`, and optional `category`.
 
-A `default` key at the root specifies the URL for queries without a bang.
+The `default` key at the root specifies what happens for queries without a bang. This can be a URL, a single bang reference, or multiple bang references.
 
 **Example `bangs.yaml`:**
 
 ```yaml
-default: 'https://www.google.com/search?q={}'
+# URL default:
+# default: 'https://www.google.com/search?q={}'
 
-# Other search engines:
-# default: 'https://www.bing.com/search?q={}'
-# default: 'https://duckduckgo.com/?q={}'
+# Single bang reference as default:
+# default: 'g'
+
+# Multi-bang reference as default (opens multiple tabs):
+default: 'g+gh'
+
+# Other examples:
+# default: 'ai+g'        # AI search + Google  
+# default: 'g+gh+so'     # Google + GitHub + StackOverflow
+# default: 'ddg'         # Just DuckDuckGo
 
 # Bang Definitions (Key is the name)
 GitHub:
@@ -157,7 +166,20 @@ Google:
   url: "https://www.google.com/search?q={}"
   description: 'Popular global search engine by Google.'
   category: 'Search'
+
+ChatGPT:
+  bang: "ai"
+  url: "https://chatgpt.com/?q={}"
+  description: 'AI assistant for questions and tasks'
+  category: 'AI'
 ```
+
+### Default Configuration Options
+
+- **URL**: `default: 'https://www.google.com/search?q={}'` - URL with `{}` placeholder
+- **Single Bang**: `default: 'g'` - Uses the Google bang for all default searches
+- **Multi-Bang**: `default: 'g+gh'` - Opens both Google and GitHub in separate tabs
+- **Complex Multi-Bang**: `default: 'ai+g+so'` - Opens AI, Google, and StackOverflow
 
 ## Setting Bangs as the Default Search Engine
 

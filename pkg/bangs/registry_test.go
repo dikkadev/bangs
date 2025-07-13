@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"log/slog"
 	"math"
+	"net/http"
+	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -50,7 +53,136 @@ func generateRandomBangs(N int) BangList {
 	}
 
 	return bl
+}
 
+func TestRegistry_DefaultForward(t *testing.T) {
+	// Create test registry with some bangs
+	registry := &Registry{
+		Entries: BangList{
+			Entries: map[string]Entry{
+				"Google": {
+					Bang: "g",
+					URL:  "https://www.google.com/search?q={}",
+				},
+				"GitHub": {
+					Bang: "gh",
+					URL:  "https://github.com/search?q={}",
+				},
+				"StackOverflow": {
+					Bang: "so",
+					URL:  "https://stackoverflow.com/search?q={}",
+				},
+			},
+			byBang: map[string]Entry{
+				"g": {
+					Bang: "g",
+					URL:  "https://www.google.com/search?q={}",
+				},
+				"gh": {
+					Bang: "gh",
+					URL:  "https://github.com/search?q={}",
+				},
+				"so": {
+					Bang: "so",
+					URL:  "https://stackoverflow.com/search?q={}",
+				},
+			},
+		},
+	}
+
+	tests := []struct {
+		name           string
+		defaultValue   string
+		query          string
+		expectedStatus int
+		expectedURL    string
+		expectMultiple bool
+	}{
+		{
+			name:           "Traditional URL default",
+			defaultValue:   "https://www.google.com/search?q={}",
+			query:          "test query",
+			expectedStatus: http.StatusFound,
+			expectedURL:    "https://www.google.com/search?q=test+query",
+			expectMultiple: false,
+		},
+		{
+			name:           "Single bang reference",
+			defaultValue:   "g",
+			query:          "test query",
+			expectedStatus: http.StatusFound,
+			expectedURL:    "https://www.google.com/search?q=test+query",
+			expectMultiple: false,
+		},
+		{
+			name:           "Multi-bang reference",
+			defaultValue:   "g+gh",
+			query:          "test query",
+			expectedStatus: http.StatusOK,
+			expectedURL:    "",
+			expectMultiple: true,
+		},
+		{
+			name:           "Multi-bang with spaces",
+			defaultValue:   "g + gh + so",
+			query:          "test query",
+			expectedStatus: http.StatusOK,
+			expectedURL:    "",
+			expectMultiple: true,
+		},
+		{
+			name:           "Invalid bang reference",
+			defaultValue:   "invalid",
+			query:          "test query",
+			expectedStatus: http.StatusInternalServerError,
+			expectedURL:    "",
+			expectMultiple: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			registry.Default = QueryURL(tt.defaultValue)
+
+			req := httptest.NewRequest("GET", "/bang", nil)
+			w := httptest.NewRecorder()
+
+			err := registry.DefaultForward(tt.query, w, req)
+
+			if tt.expectedStatus == http.StatusInternalServerError {
+				if err == nil {
+					t.Errorf("Expected error but got none")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+				return
+			}
+
+			if w.Code != tt.expectedStatus {
+				t.Errorf("Expected status %d, got %d", tt.expectedStatus, w.Code)
+			}
+
+			if tt.expectMultiple {
+				// For multi-bang, check that we get HTML with JavaScript
+				body := w.Body.String()
+				if !strings.Contains(body, "window.open") {
+					t.Errorf("Expected multi-bang HTML with window.open, got: %s", body)
+				}
+				if !strings.Contains(body, "window.location.href") {
+					t.Errorf("Expected multi-bang HTML with window.location.href, got: %s", body)
+				}
+			} else if tt.expectedURL != "" {
+				// For single redirects, check the Location header
+				location := w.Header().Get("Location")
+				if location != tt.expectedURL {
+					t.Errorf("Expected redirect to %s, got %s", tt.expectedURL, location)
+				}
+			}
+		})
+	}
 }
 
 func BenchmarkPrepareInputPreComp(b *testing.B) {

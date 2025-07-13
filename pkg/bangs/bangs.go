@@ -82,3 +82,40 @@ func (e Entry) Forward(query string, w http.ResponseWriter, r *http.Request) err
 	http.Redirect(w, r, u.String(), http.StatusFound)
 	return nil
 }
+
+func generateMultiTabHTML(entries []*Entry, query string, w http.ResponseWriter) error {
+	urls := make([]string, len(entries))
+	for i, entry := range entries {
+		u, err := entry.URL.Augment(query)
+		if err != nil {
+			slog.Error("Error augmenting URL", "err", err)
+			if _, ok := err.(AugmentNoPlaceholderError); ok {
+				http.Error(w, "No placeholder found in path, query, or fragment", http.StatusBadRequest)
+			} else {
+				http.Error(w, fmt.Sprintf("Error augmenting URL: %v", err), http.StatusInternalServerError)
+			}
+			return err
+		}
+		urls[i] = u.String()
+	}
+
+	var newTabCommands []string
+	for i := 1; i < len(urls); i++ {
+		newTabCommands = append(newTabCommands, fmt.Sprintf("window.open('%s', '_blank');", urls[i]))
+	}
+	newTabsJS := strings.Join(newTabCommands, "\n")
+
+	w.Header().Set("Content-Type", "text/html")
+	hypertext := fmt.Sprintf(`<html>
+<head></head>
+<body>
+<script>
+%s
+window.location.href = "%s";
+</script>
+</body>
+</html>`, newTabsJS, urls[0])
+
+	w.Write([]byte(hypertext))
+	return nil
+}
