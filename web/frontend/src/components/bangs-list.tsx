@@ -289,7 +289,7 @@ export function BangsList({ mainQuery }: BangsListProps) { // Destructure props
             return (
               <div
                 key={bang.name} 
-                className={`group relative bg-black border border-white/10 hover:border-pink-500/50 transition-colors p-4 overflow-hidden ${isAlias ? 'border-purple-500/30' : ''}`}
+                className={`group relative bg-black border border-white/10 ${isAlias ? 'hover:border-purple-500/50' : 'hover:border-pink-500/50'} transition-colors p-4 overflow-hidden ${isAlias ? 'border-purple-500/30' : ''}`}
               >
                 <div className={`absolute top-0 left-0 w-1 h-full opacity-0 group-hover:opacity-100 transition-opacity ${isAlias ? 'bg-purple-500' : 'bg-pink-500'}`}></div>
                 <div className="flex justify-between items-start mb-2">
