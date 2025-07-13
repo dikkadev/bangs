@@ -12,6 +12,14 @@ default: 'g'
 # default: 'g+gh+so'     # Google + GitHub + StackOverflow
 # default: 'ddg'         # Just DuckDuckGo
 
+# ================================================================================
+# Aliases - Custom shortcuts for single bangs or multi-bang combinations
+# ================================================================================
+aliases:
+  def: 'ai+g'        # Default search: AI + Google
+  search: 'g'        # Simple search alias for Google
+  shop: 'a+eb'       # Shopping: Amazon + eBay
+
 # ================================================================================ 
 # Search Engines
 # ================================================================================ 

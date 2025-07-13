@@ -36,7 +36,15 @@ func Handler(doAllowNoBang bool, doAllowMultiBang bool, ignoreCharPar string) ht
 }
 
 func listAll(w http.ResponseWriter, r *http.Request) {
-	asJSON, err := json.Marshal(All().Entries)
+	response := struct {
+		Bangs   map[string]Entry  `json:"bangs"`
+		Aliases map[string]string `json:"aliases"`
+	}{
+		Bangs:   All().Entries,
+		Aliases: registry.Aliases,
+	}
+
+	asJSON, err := json.Marshal(response)
 	if err != nil {
 		slog.Error("Error converting registry to json", "err", err)
 		http.Error(w, fmt.Sprintf("Internal JSON error -.-\n%v\n", err), http.StatusInternalServerError)

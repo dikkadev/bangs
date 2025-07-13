@@ -185,6 +185,142 @@ func TestRegistry_DefaultForward(t *testing.T) {
 	}
 }
 
+func TestBangList_PrepareInput_WithAliases(t *testing.T) {
+	// Set up test registry with aliases
+	testRegistry := &Registry{
+		Aliases: map[string]string{
+			"def":    "ai+g",
+			"search": "g",
+			"shop":   "a+eb",
+		},
+		Entries: BangList{
+			Entries: map[string]Entry{
+				"Google": {
+					Bang: "g",
+					URL:  "https://www.google.com/search?q={}",
+				},
+				"ChatGPT": {
+					Bang: "ai",
+					URL:  "https://chatgpt.com/?q={}",
+				},
+				"Amazon": {
+					Bang: "a",
+					URL:  "https://www.amazon.com/s?k={}",
+				},
+				"eBay": {
+					Bang: "eb",
+					URL:  "https://www.ebay.com/sch/i.html?_nkw={}",
+				},
+			},
+			byBang: map[string]Entry{
+				"g": {
+					Bang: "g",
+					URL:  "https://www.google.com/search?q={}",
+				},
+				"ai": {
+					Bang: "ai",
+					URL:  "https://chatgpt.com/?q={}",
+				},
+				"a": {
+					Bang: "a",
+					URL:  "https://www.amazon.com/s?k={}",
+				},
+				"eb": {
+					Bang: "eb",
+					URL:  "https://www.ebay.com/sch/i.html?_nkw={}",
+				},
+			},
+		},
+	}
+
+	// Set the global registry for testing
+	oldRegistry := registry
+	registry = testRegistry
+	defer func() { registry = oldRegistry }()
+
+	// Enable multi-bang for testing
+	oldAllowMultiBang := allowMultiBang
+	allowMultiBang = true
+	defer func() { allowMultiBang = oldAllowMultiBang }()
+
+	tests := []struct {
+		name          string
+		input         string
+		expectedBangs []string
+		expectedQuery string
+		expectError   bool
+	}{
+		{
+			name:          "Single bang alias",
+			input:         "!search test query",
+			expectedBangs: []string{"g"},
+			expectedQuery: "test query",
+			expectError:   false,
+		},
+		{
+			name:          "Multi-bang alias",
+			input:         "!def test query",
+			expectedBangs: []string{"ai", "g"},
+			expectedQuery: "test query",
+			expectError:   false,
+		},
+		{
+			name:          "Shopping alias",
+			input:         "!shop laptop",
+			expectedBangs: []string{"a", "eb"},
+			expectedQuery: "laptop",
+			expectError:   false,
+		},
+		{
+			name:          "Regular bang (no alias)",
+			input:         "!g regular search",
+			expectedBangs: []string{"g"},
+			expectedQuery: "regular search",
+			expectError:   false,
+		},
+		{
+			name:          "Non-existent alias",
+			input:         "!nonexistent query",
+			expectedBangs: nil,
+			expectedQuery: "",
+			expectError:   true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			entries, query, err := testRegistry.Entries.PrepareInput(tt.input)
+
+			if tt.expectError {
+				if err == nil {
+					t.Errorf("Expected error but got none")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+				return
+			}
+
+			if query != tt.expectedQuery {
+				t.Errorf("Expected query '%s', got '%s'", tt.expectedQuery, query)
+			}
+
+			if len(entries) != len(tt.expectedBangs) {
+				t.Errorf("Expected %d entries, got %d", len(tt.expectedBangs), len(entries))
+				return
+			}
+
+			for i, expectedBang := range tt.expectedBangs {
+				if entries[i].Bang != expectedBang {
+					t.Errorf("Expected bang '%s' at position %d, got '%s'", expectedBang, i, entries[i].Bang)
+				}
+			}
+		})
+	}
+}
+
 func BenchmarkPrepareInputPreComp(b *testing.B) {
 	for _, size := range sizes {
 		bl := generateRandomBangs(size)

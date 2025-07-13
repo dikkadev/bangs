@@ -14,8 +14,9 @@ import (
 var registry *Registry
 
 type Registry struct {
-	Default QueryURL `yaml:"default" json:"default"`
-	Entries BangList `yaml:",inline" json:"bangs"`
+	Default QueryURL          `yaml:"default" json:"default"`
+	Aliases map[string]string `yaml:"aliases,omitempty" json:"aliases,omitempty"`
+	Entries BangList          `yaml:",inline" json:"bangs"`
 }
 
 var allowNoBang = false
@@ -155,11 +156,16 @@ func (bl *BangList) UnmarshalYAML(value *yaml.Node) error {
 		return err
 	}
 	delete(tempMap, "default")
+	delete(tempMap, "aliases")
 
 	bl.Entries = make(map[string]Entry, len(tempMap))
 	bl.byBang = make(map[string]Entry, len(tempMap))
 	for k, a := range tempMap {
-		v := a.(map[string]any)
+		// Skip non-map entries (like aliases which are strings)
+		v, ok := a.(map[string]any)
+		if !ok {
+			continue
+		}
 		bangChars, ok := v["bang"].(string)
 		if !ok {
 			return fmt.Errorf("missing bang field for entry '%s'", k)
@@ -277,6 +283,12 @@ func (bl BangList) PrepareInput(input string) ([]*Entry, string, error) {
 		query = split[0]
 	} else {
 		rawBang, query = split[0], split[1]
+	}
+
+	// Resolve alias if it exists
+	if alias, exists := registry.Aliases[rawBang]; exists {
+		slog.Debug("Resolved alias", "alias", rawBang, "target", alias)
+		rawBang = alias
 	}
 
 	bangs := make([]string, 0)

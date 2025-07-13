@@ -174,6 +174,40 @@ ChatGPT:
   category: 'AI'
 ```
 
+### Aliases
+
+Aliases allow you to create custom shortcuts for single bangs or multi-bang combinations. They are defined in the `aliases` section of your `bangs.yaml` file.
+
+**Example with aliases:**
+
+```yaml
+# Aliases - Custom shortcuts for bangs
+aliases:
+  def: 'ai+g'        # !def -> AI search + Google
+  search: 'g'        # !search -> Google only  
+  shop: 'a+eb'       # !shop -> Amazon + eBay
+
+# Regular bang definitions...
+Google:
+  bang: "g"
+  url: "https://www.google.com/search?q={}"
+  description: 'Popular global search engine'
+  category: 'Search'
+
+Amazon:
+  bang: "a"
+  url: "https://www.amazon.com/s?k={}"
+  description: 'E-commerce platform'
+  category: 'Shopping'
+```
+
+**Usage examples:**
+- `!def machine learning` → Opens both ChatGPT and Google with "machine learning"
+- `!search python` → Opens Google with "python"
+- `!shop laptop` → Opens both Amazon and eBay with "laptop"
+
+Aliases are displayed in the web UI with a special "Aliases" category and purple styling to distinguish them from regular bangs.
+
 ### Default Configuration Options
 
 - **URL**: `default: 'https://www.google.com/search?q={}'` - URL with `{}` placeholder
