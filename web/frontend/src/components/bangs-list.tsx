@@ -16,8 +16,22 @@ interface BangEntry {
   category: string
 }
 
-// Define the expected API response type (map where key is name)
-type BangsApiResponse = Record<string, BangEntry>
+// Type definition for alias entries
+interface AliasEntry {
+  name: string // Alias name
+  bang: string // The alias itself (for display)
+  description: string // Generated description
+  url: string // Will be empty for aliases
+  category: string // Will be "Aliases"
+  isAlias: boolean // Flag to identify aliases
+  target: string // What the alias resolves to
+}
+
+// Define the expected API response type
+interface BangsApiResponse {
+  bangs: Record<string, BangEntry>
+  aliases: Record<string, string>
+}
 
 // Define props type
 interface BangsListProps {
@@ -26,12 +40,18 @@ interface BangsListProps {
 
 // Custom category sort order (most useful first for technical users)
 const categorySortOrder: string[] = [
-  "Development",
+  "Aliases",
+  "Development", 
   "Search",
+  "AI",
   "Reference",
-  "Media",
+  "Entertainment",
   "Shopping",
   "Social",
+  "Images",
+  "Maps",
+  "Tools",
+  "3D Printing",
   // Add other categories here in desired order
 ];
 
@@ -56,8 +76,7 @@ const ensurePeriod = (text: string): string => {
 };
 
 export function BangsList({ mainQuery }: BangsListProps) { // Destructure props
-  // const [allBangs, setAllBangs] = useState<BangsApiResponse>({}) // Store API response
-  const [bangsList, setBangsList] = useState<BangEntry[]>([]) // Store processed list for rendering
+  const [bangsList, setBangsList] = useState<(BangEntry | AliasEntry)[]>([]) // Store processed list for rendering
   const [searchTerm, setSearchTerm] = useState("")
   const [copiedIndex, setCopiedIndex] = useState<string | null>(null) // Use bang name as key
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
@@ -73,11 +92,23 @@ export function BangsList({ mainQuery }: BangsListProps) { // Destructure props
           throw new Error(`HTTP error! status: ${response.status}`)
         }
         const data: BangsApiResponse = await response.json()
-        // Remove setAllBangs call
-        // setAllBangs(data)
 
-        // Process the map into an array
-        let processedList = Object.entries(data).map(([name, entry]) => ({ ...entry, name })) // Add name field
+        // Process bangs into an array
+        let processedList: (BangEntry | AliasEntry)[] = Object.entries(data.bangs).map(([name, entry]) => ({ ...entry, name }))
+        
+        // Process aliases and add them to the list
+        if (data.aliases) {
+          const aliasEntries: AliasEntry[] = Object.entries(data.aliases).map(([aliasName, target]) => ({
+            name: aliasName,
+            bang: aliasName,
+            description: `Alias for ${target}`,
+            url: "", // Aliases don't have URLs
+            category: "Aliases",
+            isAlias: true,
+            target: target
+          }))
+          processedList = [...processedList, ...aliasEntries]
+        }
         
         // Sort the list with custom category order
         processedList.sort((a, b) => {
@@ -136,17 +167,25 @@ export function BangsList({ mainQuery }: BangsListProps) { // Destructure props
     fetchBangs()
   }, [])
 
-  const handleCopy = (url: string, name: string) => { // Use name instead of index
-    // Use mainQuery prop for final URL generation
-    const finalUrl = generateFinalUrl(url, mainQuery);
+  const handleCopy = (entry: BangEntry | AliasEntry, name: string) => {
+    let textToCopy: string;
+    
+    if ('isAlias' in entry && entry.isAlias) {
+      // For aliases, copy the bang query format
+      textToCopy = mainQuery ? `!${entry.bang} ${mainQuery}` : `!${entry.bang}`;
+    } else {
+      // For regular bangs, copy the final URL
+      textToCopy = generateFinalUrl(entry.url, mainQuery);
+    }
 
-    navigator.clipboard.writeText(finalUrl)
-    setCopiedIndex(name) // Use name as key
+    navigator.clipboard.writeText(textToCopy)
+    setCopiedIndex(name)
 
     toast({
-      title: "URL copied!",
-      // Update description to reflect the actual query used
-      description: mainQuery ? `Copied with "${mainQuery}" as the search term` : "Copied base URL (no query)",
+      title: 'isAlias' in entry && entry.isAlias ? "Alias copied!" : "URL copied!",
+      description: 'isAlias' in entry && entry.isAlias 
+        ? `Copied alias: ${textToCopy}`
+        : mainQuery ? `Copied with "${mainQuery}" as the search term` : "Copied base URL (no query)",
       duration: 3000,
     })
 
@@ -156,9 +195,16 @@ export function BangsList({ mainQuery }: BangsListProps) { // Destructure props
   }
 
   // Function to handle opening link in new tab
-  const handleOpenLink = (url: string) => {
-    const finalUrl = generateFinalUrl(url, mainQuery);
-    window.open(finalUrl, "_blank", "noopener,noreferrer");
+  const handleOpenLink = (entry: BangEntry | AliasEntry) => {
+    if ('isAlias' in entry && entry.isAlias) {
+      // For aliases, redirect to the bang endpoint with the alias
+      const query = mainQuery ? `!${entry.bang} ${mainQuery}` : `!${entry.bang}`;
+      window.open(`/bang?q=${encodeURIComponent(query)}`, "_blank", "noopener,noreferrer");
+    } else {
+      // For regular bangs, open the final URL
+      const finalUrl = generateFinalUrl(entry.url, mainQuery);
+      window.open(finalUrl, "_blank", "noopener,noreferrer");
+    }
   }
 
   // Filter bangs based on search term and active category
@@ -234,27 +280,37 @@ export function BangsList({ mainQuery }: BangsListProps) { // Destructure props
 
       {isGridView ? (
         <div className="grid grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> {/* Default to 2 cols */}
-          {filteredBangs.map((bang) => { // Add braces for variable declaration
-            const displayUrl = generateFinalUrl(bang.url, mainQuery); // Generate URL for display
+          {filteredBangs.map((bang) => {
+            const isAlias = 'isAlias' in bang && bang.isAlias;
+            const displayUrl = isAlias 
+              ? `!${bang.bang}${mainQuery ? ` ${mainQuery}` : ''}` 
+              : generateFinalUrl(bang.url, mainQuery);
+            
             return (
               <div
                 key={bang.name} 
-                className="group relative bg-black border border-white/10 hover:border-pink-500/50 transition-colors p-4 overflow-hidden"
+                className={`group relative bg-black border border-white/10 hover:border-pink-500/50 transition-colors p-4 overflow-hidden ${isAlias ? 'border-purple-500/30' : ''}`}
               >
-                <div className="absolute top-0 left-0 w-1 h-full bg-pink-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className={`absolute top-0 left-0 w-1 h-full opacity-0 group-hover:opacity-100 transition-opacity ${isAlias ? 'bg-purple-500' : 'bg-pink-500'}`}></div>
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-bold text-white group-hover:text-pink-500 transition-colors">{bang.name}</h3>
-                  <span className="text-pink-500 font-mono text-sm">{bang.bang}</span>
+                  <h3 className={`font-bold text-white group-hover:transition-colors ${isAlias ? 'group-hover:text-purple-500' : 'group-hover:text-pink-500'}`}>
+                    {bang.name}
+                    {isAlias && <span className="ml-1 text-xs text-purple-400">alias</span>}
+                  </h3>
+                  <span className={`font-mono text-sm ${isAlias ? 'text-purple-500' : 'text-pink-500'}`}>{bang.bang}</span>
                 </div>
                 <p className="text-sm text-gray-400 mb-3">
                   {/* Category first */}
                   {bang.category && (
-                    <span className="text-pink-500 text-sm mr-2">{bang.category}</span>
+                    <span className={`text-sm mr-2 ${isAlias ? 'text-purple-500' : 'text-pink-500'}`}>{bang.category}</span>
                   )}
                   {ensurePeriod(bang.description)}
+                  {isAlias && 'target' in bang && (
+                    <span className="text-xs text-gray-500 ml-2">→ {bang.target}</span>
+                  )}
                 </p>
                 <div className="flex items-center justify-between">
-                  {/* Display generated URL */}
+                  {/* Display generated URL or alias command */}
                   <div className="text-xs text-gray-500 font-mono break-all mr-2">{displayUrl}</div>
                   {/* Button Group */}
                   <div className="flex space-x-1 shrink-0">
@@ -263,8 +319,8 @@ export function BangsList({ mainQuery }: BangsListProps) { // Destructure props
                       variant="outline"
                       size="icon"
                       className="h-8 w-8 border-white/10 hover:bg-pink-500 hover:text-white hover:border-pink-500 cursor-pointer"
-                      onClick={() => handleOpenLink(bang.url)}
-                      aria-label="Open link in new tab"
+                      onClick={() => handleOpenLink(bang)}
+                      aria-label={isAlias ? "Execute alias" : "Open link in new tab"}
                     >
                       <ExternalLink className="h-4 w-4" />
                     </Button>
@@ -273,8 +329,8 @@ export function BangsList({ mainQuery }: BangsListProps) { // Destructure props
                       variant="outline"
                       size="icon"
                       className="h-8 w-8 border-white/10 hover:bg-pink-500 hover:text-white hover:border-pink-500 cursor-pointer"
-                      onClick={() => handleCopy(bang.url, bang.name)}
-                      aria-label="Copy URL with current search query"
+                      onClick={() => handleCopy(bang, bang.name)}
+                      aria-label={isAlias ? "Copy alias command" : "Copy URL with current search query"}
                     >
                       {copiedIndex === bang.name ? <Check className="h-4 w-4 text-white" /> : <Copy className="h-4 w-4" />}
                     </Button>
@@ -286,27 +342,37 @@ export function BangsList({ mainQuery }: BangsListProps) { // Destructure props
         </div>
       ) : (
         <div className="border border-white/10">
-          {filteredBangs.map((bang) => { // Add braces for variable declaration
-            const displayUrl = generateFinalUrl(bang.url, mainQuery); // Generate URL for display
+          {filteredBangs.map((bang) => {
+            const isAlias = 'isAlias' in bang && bang.isAlias;
+            const displayUrl = isAlias 
+              ? `!${bang.bang}${mainQuery ? ` ${mainQuery}` : ''}` 
+              : generateFinalUrl(bang.url, mainQuery);
+            
             return (
               <div
                 key={bang.name}
-                className="group flex items-center border-b border-white/10 last:border-b-0 bg-black transition-colors"
+                className={`group flex items-center border-b border-white/10 last:border-b-0 bg-black transition-colors ${isAlias ? 'border-l-2 border-l-purple-500/30' : ''}`}
               >
-                <div className="w-1 h-full bg-pink-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className={`w-1 h-full opacity-0 group-hover:opacity-100 transition-opacity ${isAlias ? 'bg-purple-500' : 'bg-pink-500'}`}></div>
                 <div className="p-4 flex-grow">
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-bold text-white group-hover:text-pink-500 transition-colors">{bang.name}</h3>
-                    <span className="text-pink-500 font-mono text-sm">{bang.bang}</span>
+                    <h3 className={`font-bold text-white group-hover:transition-colors ${isAlias ? 'group-hover:text-purple-500' : 'group-hover:text-pink-500'}`}>
+                      {bang.name}
+                      {isAlias && <span className="ml-1 text-xs text-purple-400">alias</span>}
+                    </h3>
+                    <span className={`font-mono text-sm ${isAlias ? 'text-purple-500' : 'text-pink-500'}`}>{bang.bang}</span>
                   </div>
                   <p className="text-sm text-gray-400">
                     {/* Category first */}
                     {bang.category && (
-                      <span className="text-pink-500 text-sm mr-2">{bang.category}</span>
+                      <span className={`text-sm mr-2 ${isAlias ? 'text-purple-500' : 'text-pink-500'}`}>{bang.category}</span>
                     )}
                     {ensurePeriod(bang.description)}
+                    {isAlias && 'target' in bang && (
+                      <span className="text-xs text-gray-500 ml-2">→ {bang.target}</span>
+                    )}
                   </p>
-                  {/* Display generated URL */}
+                  {/* Display generated URL or alias command */}
                   <div className="text-xs text-gray-500 font-mono mt-1">{displayUrl}</div>
                 </div>
                 <div className="p-4 shrink-0">
@@ -317,8 +383,8 @@ export function BangsList({ mainQuery }: BangsListProps) { // Destructure props
                       variant="outline"
                       size="icon"
                       className="h-8 w-8 border-white/10 hover:bg-pink-500 hover:text-white hover:border-pink-500 cursor-pointer"
-                      onClick={() => handleOpenLink(bang.url)}
-                      aria-label="Open link in new tab"
+                      onClick={() => handleOpenLink(bang)}
+                      aria-label={isAlias ? "Execute alias" : "Open link in new tab"}
                     >
                       <ExternalLink className="h-4 w-4" />
                     </Button>
@@ -327,8 +393,8 @@ export function BangsList({ mainQuery }: BangsListProps) { // Destructure props
                       variant="outline"
                       size="icon"
                       className="h-8 w-8 border-white/10 hover:bg-pink-500 hover:text-white hover:border-pink-500 cursor-pointer"
-                      onClick={() => handleCopy(bang.url, bang.name)}
-                      aria-label="Copy URL with current search query"
+                      onClick={() => handleCopy(bang, bang.name)}
+                      aria-label={isAlias ? "Copy alias command" : "Copy URL with current search query"}
                     >
                       {copiedIndex === bang.name ? <Check className="h-4 w-4 text-white" /> : <Copy className="h-4 w-4" />}
                     </Button>
