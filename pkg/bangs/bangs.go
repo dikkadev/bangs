@@ -99,6 +99,8 @@ func generateMultiTabHTML(entries []*Entry, query string, w http.ResponseWriter)
 		urls[i] = u.String()
 	}
 
+	slog.Debug("Generated URLs for multi-bang", "urls", urls)
+
 	var newTabCommands []string
 	for i := 1; i < len(urls); i++ {
 		newTabCommands = append(newTabCommands, fmt.Sprintf("window.open('%s', '_blank');", urls[i]))

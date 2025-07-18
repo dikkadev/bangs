@@ -49,6 +49,14 @@ func Load(path string) error {
 			keys = append(keys, k)
 		}
 		slog.Debug("All loaded bangs", "names", keys)
+
+		if len(registry.Aliases) > 0 {
+			aliasKeys := make([]string, 0, len(registry.Aliases))
+			for k := range registry.Aliases {
+				aliasKeys = append(aliasKeys, k)
+			}
+			slog.Debug("All loaded aliases", "aliases", registry.Aliases)
+		}
 	}
 	return nil
 }
@@ -125,12 +133,22 @@ func (r *Registry) handleDefaultBangReferences(defaultStr, query string, w http.
 		return fmt.Errorf("no valid bang references found in default")
 	}
 
+	slog.Debug("Default bang resolution complete", "entryCount", len(entries), "entries", func() []string {
+		names := make([]string, len(entries))
+		for i, entry := range entries {
+			names[i] = entry.Bang
+		}
+		return names
+	}())
+
 	// Handle single vs multi-bang
 	if len(entries) == 1 {
 		// Single bang - direct redirect
+		slog.Debug("Single bang default, redirecting", "bang", entries[0].Bang)
 		return entries[0].Forward(query, w, req)
 	}
 
+	slog.Debug("Multi-bang default, generating HTML", "bangCount", len(entries))
 	return generateMultiTabHTML(entries, query, w)
 }
 
