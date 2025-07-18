@@ -56,8 +56,12 @@ func generateRandomBangs(N int) BangList {
 }
 
 func TestRegistry_DefaultForward(t *testing.T) {
-	// Create test registry with some bangs
+	// Create test registry with some bangs and aliases
 	registry := &Registry{
+		Aliases: map[string]string{
+			"dev":    "gh+so",
+			"search": "g",
+		},
 		Entries: BangList{
 			Entries: map[string]Entry{
 				"Google": {
@@ -125,6 +129,22 @@ func TestRegistry_DefaultForward(t *testing.T) {
 		{
 			name:           "Multi-bang with spaces",
 			defaultValue:   "g + gh + so",
+			query:          "test query",
+			expectedStatus: http.StatusOK,
+			expectedURL:    "",
+			expectMultiple: true,
+		},
+		{
+			name:           "Single alias reference",
+			defaultValue:   "search",
+			query:          "test query",
+			expectedStatus: http.StatusFound,
+			expectedURL:    "https://www.google.com/search?q=test+query",
+			expectMultiple: false,
+		},
+		{
+			name:           "Multi-bang alias reference",
+			defaultValue:   "dev",
 			query:          "test query",
 			expectedStatus: http.StatusOK,
 			expectedURL:    "",

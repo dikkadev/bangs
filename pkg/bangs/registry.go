@@ -90,13 +90,34 @@ func (r *Registry) handleDefaultBangReferences(defaultStr, query string, w http.
 			continue
 		}
 
-		entry, exists := r.Entries.byBang[bangRef]
-		if !exists {
-			slog.Error("Default bang reference not found", "bang", bangRef)
-			http.Error(w, fmt.Sprintf("Default bang reference '%s' not found", bangRef), http.StatusInternalServerError)
-			return fmt.Errorf("default bang reference '%s' not found", bangRef)
+		// Check if it's an alias first
+		if alias, exists := r.Aliases[bangRef]; exists {
+			slog.Debug("Resolved alias in default", "alias", bangRef, "target", alias)
+			// Recursively handle the alias target (which might be multi-bang)
+			aliasRefs := strings.Split(alias, "+")
+			for _, aliasRef := range aliasRefs {
+				aliasRef = strings.TrimSpace(aliasRef)
+				if aliasRef == "" {
+					continue
+				}
+				entry, exists := r.Entries.byBang[aliasRef]
+				if !exists {
+					slog.Error("Default alias target bang not found", "alias", bangRef, "target", aliasRef)
+					http.Error(w, fmt.Sprintf("Default alias '%s' target bang '%s' not found", bangRef, aliasRef), http.StatusInternalServerError)
+					return fmt.Errorf("default alias '%s' target bang '%s' not found", bangRef, aliasRef)
+				}
+				entries = append(entries, &entry)
+			}
+		} else {
+			// Regular bang lookup
+			entry, exists := r.Entries.byBang[bangRef]
+			if !exists {
+				slog.Error("Default bang reference not found", "bang", bangRef)
+				http.Error(w, fmt.Sprintf("Default bang reference '%s' not found", bangRef), http.StatusInternalServerError)
+				return fmt.Errorf("default bang reference '%s' not found", bangRef)
+			}
+			entries = append(entries, &entry)
 		}
-		entries = append(entries, &entry)
 	}
 
 	if len(entries) == 0 {
