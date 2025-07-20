@@ -1,9 +1,9 @@
 package main
 
 import (
-	"bangs/internal/watcher"
-	"bangs/pkg/bangs"
 	"fmt"
+	"github.com/dikkadev/bangs/internal/watcher"
+	"github.com/dikkadev/bangs/pkg/bangs"
 	"log/slog"
 	"os"
 	"strconv"

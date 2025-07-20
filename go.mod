@@ -1,4 +1,4 @@
-module bangs
+module github.com/dikkadev/bangs
 
 go 1.23.0
 

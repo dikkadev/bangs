@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"bangs/pkg/middleware"
+	"github.com/dikkadev/bangs/pkg/middleware"
 
 	"github.com/dikkadev/prettyslog"
 )

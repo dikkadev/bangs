@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bangs/pkg/bangs"
+	"github.com/dikkadev/bangs/pkg/bangs"
 	"os"
 	"testing"
 )

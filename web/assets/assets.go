@@ -1,8 +1,8 @@
 package assets
 
 import (
-	"bangs/pkg/middleware"
 	"embed"
+	"github.com/dikkadev/bangs/pkg/middleware"
 	"log/slog"
 	"net/http"
 

@@ -1,10 +1,10 @@
 package main
 
 import (
-	"bangs/internal/watcher" // Will need adjustment based on final project structure
-	"bangs/pkg/bangs"        // Will need adjustment based on final project structure
-	"bangs/web"              // Add import for the new web package
 	"fmt"
+	"github.com/dikkadev/bangs/internal/watcher"
+	"github.com/dikkadev/bangs/pkg/bangs"
+	"github.com/dikkadev/bangs/web"
 	"io"
 	"io/fs"
 	"log/slog"
