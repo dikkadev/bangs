@@ -1,6 +1,8 @@
 # Change these variables as necessary.
-main_package_path = .
+main_package_path = ./cmd/bangs-server
 binary_name = bangs
+mcp_package_path = ./mcp
+mcp_binary_name = bangs-mcp
 
 VERSION = $(shell git describe --tags --dirty)
 
@@ -40,7 +42,7 @@ audit: test
 ## test: run all tests
 .PHONY: test
 test:
-	go test -v -race -buildvcs ./...
+	go test -v -race -buildvcs=false ./...
 
 ## test/forwards: run all tests for forwards
 .PHONY: test/forwards
@@ -50,7 +52,7 @@ test/forwards:
 ## test/cover: run all tests and display coverage
 .PHONY: test/cover
 test/cover:
-	go test -v -race -buildvcs -coverprofile=/tmp/coverage.out ./...
+	go test -v -race -buildvcs=false -coverprofile=/tmp/coverage.out ./...
 	go tool cover -html=/tmp/coverage.out
 
 
@@ -68,12 +70,26 @@ tidy:
 .PHONY: build
 build:
 	# Include additional build steps, like TypeScript, SCSS or Tailwind compilation here...
-	go build -ldflags "-X main.version=`git describe --tags --dirty`" -o=/tmp/bin/${binary_name} ${main_package_path}
+	go build -buildvcs=false -ldflags "-X main.version=`git describe --tags --dirty`" -o=/tmp/bin/${binary_name} ${main_package_path}
+
+## build/mcp: build the MCP server
+.PHONY: build/mcp
+build/mcp:
+	go build -buildvcs=false -ldflags "-X main.version=`git describe --tags --dirty`" -o=/tmp/bin/${mcp_binary_name} ${mcp_package_path}
+
+## build/all: build both the main application and MCP server
+.PHONY: build/all
+build/all: build build/mcp
 
 ## run: run the  application
 .PHONY: run
 run: build
 	/tmp/bin/${binary_name} -vwab bangs.yaml
+
+## run/mcp: run the MCP server
+.PHONY: run/mcp
+run/mcp: build/mcp
+	/tmp/bin/${mcp_binary_name} -b bangs.yaml -v -w
 
 ## run/live: run the application with reloading on file changes
 .PHONY: run/live

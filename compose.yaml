@@ -17,3 +17,22 @@ services:
       # - BANGS_PORT=8080               # Uncomment to change the port inside the container
       # - BANGS_IGNORE_CHAR='.'         # Uncomment to change the ignore character
 
+  bangs-mcp:
+    image: ghcr.io/dikkadev/bangs:latest
+    # image: bangs
+    # build: .
+    entrypoint: ["/app/bangs-mcp"]
+    restart: unless-stopped
+    pull_policy: always
+    ports:
+      - 8081:8081
+    volumes:
+      - ./bangs.yaml:/app/bangs.yaml # Necessary to run
+    environment:
+      - BANGS_BANGFILE=/app/bangs.yaml  # Same path as volume
+      - BANGS_WATCH=true                # Whether to watch for changes in the file
+      - BANGS_MCP_HTTP=true             # Run in HTTP mode
+      - BANGS_MCP_PORT=8081             # MCP server port
+      # - BANGS_VERBOSE=true            # Uncomment to see debug logs
+    profiles: ["mcp"]                   # Disabled by default
+

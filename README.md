@@ -5,6 +5,7 @@ A lightweight and extensible search engine that leverages "bangs" to quickly red
 ## Features
 
 - **Web UI**: Browse, filter, and search available bangs through a modern web interface.
+- **MCP Server**: Model Context Protocol server for AI assistants like Claude to access search functionality.
 - **Customizable Bangs**: Define and manage your own bangs through a simple `bangs.yaml` configuration file.
 - **Flexible Query Handling**: Perform searches using the `/bang?q=...` endpoint.
 - **Flexible Default Search**: Specify a default as a URL, single bang, or multi-bang combination (e.g., `g+gh` opens both Google and GitHub).
@@ -214,6 +215,187 @@ Aliases are displayed in the web UI with a special "Aliases" category and purple
 - **Single Bang**: `default: 'g'` - Uses the Google bang for all default searches
 - **Multi-Bang**: `default: 'g+gh'` - Opens both Google and GitHub in separate tabs
 - **Complex Multi-Bang**: `default: 'ai+g+so'` - Opens AI, Google, and StackOverflow
+
+## MCP Server (Model Context Protocol)
+
+Bangs includes a separate MCP server that provides AI assistants like Claude with access to search functionality through the Model Context Protocol. This allows LLMs to discover available search engines and execute searches programmatically.
+
+### Features
+
+- **Tools**: Execute single or multi-bang searches, get bangs by category
+- **Resources**: Browse complete bang registry and available categories  
+- **Dual Transport**: Supports both stdio and HTTP modes
+- **Hot Reload**: Automatically reloads when `bangs.yaml` changes
+- **No Installation Required**: Run directly with `go run` command
+
+### Quick Start
+
+1. **Download Configuration**:
+   ```bash
+   curl -o ~/bangs.yaml https://raw.githubusercontent.com/dikkadev/bangs/main/bangs.yaml
+   ```
+
+2. **Run MCP Server**:
+   ```bash
+   go run github.com/dikkadev/bangs/mcp@latest -b ~/bangs.yaml
+   ```
+
+### MCP Client Configuration
+
+#### Claude Desktop (Local)
+
+Add to your Claude Desktop configuration file:
+
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`  
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "bangs": {
+      "command": ["go", "run", "github.com/dikkadev/bangs/mcp@latest"],
+      "args": ["-b", "~/bangs.yaml"],
+      "env": {
+        "BANGS_WATCH": "true",
+        "BANGS_VERBOSE": "false"
+      }
+    }
+  }
+}
+```
+
+#### opencode (Local)
+
+Add to your `opencode.json` configuration:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "bangs": {
+      "type": "local",
+      "command": ["go", "run", "github.com/dikkadev/bangs/mcp@latest"],
+      "args": ["-b", "~/bangs.yaml"],
+      "enabled": true,
+      "environment": {
+        "BANGS_WATCH": "true"
+      }
+    }
+  }
+}
+```
+
+#### Remote MCP Server
+
+For HTTP-based MCP clients, you can run the server in HTTP mode:
+
+```bash
+go run github.com/dikkadev/bangs/mcp@latest -b ~/bangs.yaml --http --port 8081
+```
+
+Then configure your MCP client:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "bangs-remote": {
+      "type": "remote",
+      "url": "http://localhost:8081/mcp",
+      "enabled": true
+    }
+  }
+}
+```
+
+### Docker Deployment
+
+The MCP server is included in the Docker image and can be run alongside the web server:
+
+```yaml
+# docker-compose.yml
+services:
+  bangs:
+    image: ghcr.io/dikkadev/bangs:latest
+    ports: ["8080:8080"]
+    volumes: ["./bangs.yaml:/app/bangs.yaml"]
+    environment:
+      - BANGS_BANGFILE=/app/bangs.yaml
+
+  bangs-mcp:
+    image: ghcr.io/dikkadev/bangs:latest
+    entrypoint: ["/app/bangs-mcp"]
+    ports: ["8081:8081"]
+    volumes: ["./bangs.yaml:/app/bangs.yaml"]
+    environment:
+      - BANGS_BANGFILE=/app/bangs.yaml
+      - BANGS_MCP_HTTP=true
+      - BANGS_MCP_PORT=8081
+      - BANGS_WATCH=true
+    profiles: ["mcp"]  # Optional, disabled by default
+```
+
+**Usage**:
+```bash
+# Run both web and MCP servers
+docker compose --profile mcp up
+
+# Run only MCP server
+docker compose --profile mcp up bangs-mcp
+```
+
+### Available Tools
+
+The MCP server provides these tools to AI assistants:
+
+#### `execute_bang`
+Execute a search using a specific bang.
+- **Parameters**: `bang` (string), `query` (string)
+- **Example**: `execute_bang(bang="gh", query="golang mcp")`
+- **Returns**: Generated search URL
+
+#### `execute_multi_bang`  
+Execute a search using multiple bangs simultaneously.
+- **Parameters**: `bangs` (array), `query` (string)
+- **Example**: `execute_multi_bang(bangs=["gh", "g"], query="golang mcp")`
+- **Returns**: Multiple URLs with error handling for invalid bangs
+
+#### `get_bangs_by_category`
+Get all bangs in a specific category.
+- **Parameters**: `category` (string)
+- **Example**: `get_bangs_by_category(category="Development")`
+- **Returns**: List of bangs in the specified category
+
+### Available Resources
+
+#### `bangs://registry`
+Complete bang registry with all available search engines, their descriptions, categories, and URL templates.
+
+#### `bangs://categories`  
+List of all available categories for organizing and filtering bangs.
+
+### Command-Line Options
+
+| Flag       | Env Variable      | Description                    | Default | Example           |
+|------------|-------------------|--------------------------------|---------|-------------------|
+| `--bangs`  | `BANGS_BANGFILE`  | Path to bangs.yaml file       | *Required* | `-b ~/bangs.yaml` |
+| `--http`   | `BANGS_MCP_HTTP`  | Run in HTTP mode              | `false` | `--http`          |
+| `--port`   | `BANGS_MCP_PORT`  | HTTP server port              | `8081`  | `-p 8082`         |
+| `--watch`  | `BANGS_WATCH`     | Reload config on changes      | `false` | `-w`              |
+| `--verbose`| `BANGS_VERBOSE`   | Enable debug logging          | `false` | `-v`              |
+
+### Example AI Interactions
+
+Once configured, AI assistants can use bangs like this:
+
+**User**: "Search for Go MCP libraries on GitHub and Google"  
+**AI**: *Uses `execute_multi_bang` tool with bangs=["gh", "g"] and query="Go MCP libraries"*
+
+**User**: "What development tools are available?"  
+**AI**: *Uses `get_bangs_by_category` tool with category="Development"*
+
+**User**: "Find the latest React documentation"  
+**AI**: *Uses `execute_bang` tool with bang="mdn" and query="React documentation"*
 
 ## Setting Bangs as the Default Search Engine
 

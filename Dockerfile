@@ -29,19 +29,21 @@ COPY . .
 # Copy built frontend from the previous stage into the correct location for embedding
 COPY --from=frontend-builder /app/frontend/dist ./web/frontend/dist
 
-# Build the Go application (which now embeds the frontend)
+# Build both the web server and MCP server
 RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -ldflags "-X main.version=$VERSION" -o bangs cmd/bangs-server/main.go
+RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -ldflags "-X main.version=$VERSION" -o bangs-mcp mcp/main.go
 
 # --- Final Stage ---
 FROM alpine:latest
 
 WORKDIR /app
 
-# Copy only the compiled Go binary from the builder stage
+# Copy both compiled Go binaries from the builder stage
 COPY --from=builder /app/bangs ./
+COPY --from=builder /app/bangs-mcp ./
 
-# Expose the port the app listens on
-EXPOSE 8080
+# Expose the ports the apps listen on
+EXPOSE 8080 8081
 
 # Run the binary
 # The bangs.yaml file will need to be mounted as a volume in docker-compose
