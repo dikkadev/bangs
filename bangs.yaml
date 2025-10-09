@@ -3,7 +3,7 @@
 # default: 'https://www.google.com/search?q={}'
 
 # Single bang reference:
-default: 'g'
+default: 'sp'
 
 # Multi-bang reference (opens multiple tabs):
 # default: 'ai+g'        # AI search + Google
@@ -16,7 +16,7 @@ default: 'g'
 # Aliases - Custom shortcuts for single bangs or multi-bang combinations
 # ================================================================================
 aliases:
-  def: 'ai+g'        # Default search: AI + Google
+  def: 'ai+sp'        # Default search: AI + Google
   search: 'g'        # Simple search alias for Google
   shop: 'a+eb'       # Shopping: Amazon + eBay
 
@@ -27,6 +27,12 @@ Google:
   bang: 'g'
   url: 'https://www.google.com/search?q={}'
   description: 'Popular global search engine by Google'
+  category: 'Search'
+
+StartPage:
+  bang: 'sp'
+  url: 'https://www.startpage.com/sp/search?language=english&qadf=none&query={}'
+  description: 'Anonymous search engine based on Google'
   category: 'Search'
 
 Bing:
@@ -51,12 +57,6 @@ BraveSearch:
   bang: 'brv'
   url: 'https://search.brave.com/search?q={}'
   description: 'Privacy-focused search engine by Brave browser'
-  category: 'Search'
-
-StartPage:
-  bang: 'spg'
-  url: 'https://www.startpage.com/sp/search?q={}'
-  description: 'Anonymous search engine based on Google'
   category: 'Search'
 
 Qwant:
@@ -110,6 +110,13 @@ ChatGPT:
   url: 'https://chatgpt.com/?q={}&hints=search&ref=ext'
   description: 'Uses ChatGPT search mode'
   category: 'AI'
+
+ChatGPTNoWeb:
+  bang: 'aid'
+  url: 'https://chatgpt.com/?q={}&ref=ext'
+  description: 'Uses ChatGPT regular mode'
+  category: 'AI'
+
 
 Claude:
   bang: 'cl'
@@ -293,7 +300,7 @@ IMDb:
   category: 'Entertainment'
 
 Spotify:
-  bang: 'sp'
+  bang: 'spo'
   url: 'https://open.spotify.com/search/{}'
   description: 'Music streaming service'
   category: 'Entertainment'
