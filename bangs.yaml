@@ -323,6 +323,12 @@ WerStreamtEs:
   description: 'Find where to stream movies and series'
   category: 'Entertainment'
 
+Terraria:
+  bang: 'tw'
+  url: 'https://terraria.wiki.gg/wiki/Special:Search?search={}&go=Go&ns0=1'
+  description: 'Look something up in Terraria Wiki (not fandom)'
+  category: 'Entertainment'
+
 # ================================================================================ 
 # Shopping
 # ================================================================================ 
