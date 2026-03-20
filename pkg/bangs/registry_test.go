@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -338,6 +339,30 @@ func TestBangList_PrepareInput_WithAliases(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func TestLoad_ProjectRegistryIncludesKagiAsDefault(t *testing.T) {
+	err := Load(filepath.Join("..", "..", "bangs.yaml"))
+	if err != nil {
+		t.Fatalf("failed to load project registry: %v", err)
+	}
+
+	if registry.Default != QueryURL("kagi") {
+		t.Fatalf("expected default bang to be kagi, got %q", registry.Default)
+	}
+
+	entry, ok := registry.Entries.byBang["kagi"]
+	if !ok {
+		t.Fatal("expected Kagi bang to be present in project registry")
+	}
+
+	if entry.URL != QueryURL("https://kagi.com/search?q={}") {
+		t.Fatalf("expected Kagi URL to be configured, got %q", entry.URL)
+	}
+
+	if entry.Category != "Search" {
+		t.Fatalf("expected Kagi category to be Search, got %q", entry.Category)
 	}
 }
 

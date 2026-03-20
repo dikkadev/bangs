@@ -3,7 +3,7 @@
 # default: 'https://www.google.com/search?q={}'
 
 # Single bang reference:
-default: 'sp'
+default: 'kagi'
 
 # Multi-bang reference (opens multiple tabs):
 # default: 'ai+g'        # AI search + Google
@@ -16,7 +16,7 @@ default: 'sp'
 # Aliases - Custom shortcuts for single bangs or multi-bang combinations
 # ================================================================================
 aliases:
-  def: 'ai+sp'        # Default search: AI + Google
+  def: 'ai+kagi'     # Default search: AI + Kagi
   search: 'g'        # Simple search alias for Google
   shop: 'a+eb'       # Shopping: Amazon + eBay
 
@@ -33,6 +33,12 @@ StartPage:
   bang: 'sp'
   url: 'https://www.startpage.com/sp/search?language=english&qadf=none&query={}'
   description: 'Anonymous search engine based on Google'
+  category: 'Search'
+
+Kagi:
+  bang: 'kagi'
+  url: 'https://kagi.com/search?q={}'
+  description: 'Premium privacy-focused search engine'
   category: 'Search'
 
 Bing:
@@ -439,4 +445,3 @@ Thangs:
   url: 'https://thangs.com/search/{}'
   description: 'Search engine for 3D models'
   category: '3D Printing'
-
