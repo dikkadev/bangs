@@ -377,12 +377,6 @@ Unsplash:
   description: 'Free high-resolution images'
   category: 'Images'
 
-Flickr:
-  bang: 'fl'
-  url: 'https://www.flickr.com/search/?text={}'
-  description: 'Photo sharing and hosting service'
-  category: 'Images'
-
 Pexels:
   bang: 'px'
   url: 'https://www.pexels.com/search/{}/'
