@@ -3,7 +3,7 @@
 # default: 'https://www.google.com/search?q={}'
 
 # Single bang reference:
-default: 'kagi'
+default: 'g'
 
 # Multi-bang reference (opens multiple tabs):
 # default: 'ai+g'        # AI search + Google
@@ -16,7 +16,7 @@ default: 'kagi'
 # Aliases - Custom shortcuts for single bangs or multi-bang combinations
 # ================================================================================
 aliases:
-  def: 'ai+kagi'     # Default search: AI + Kagi
+  def: 'ai+g'
   search: 'g'        # Simple search alias for Google
   shop: 'a+eb'       # Shopping: Amazon + eBay
 
