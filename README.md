@@ -56,7 +56,7 @@ The Docker image includes the pre-built web UI and the Go backend.
 
 ### Build from Source
 
-Ensure you have [Go](https://golang.org/dl/) (version 1.21 or later) and [Bun](https://bun.sh/) installed.
+Ensure you have [Go](https://golang.org/dl/) (version 1.26.2 or later) and [Bun](https://bun.sh/) installed.
 
 1.  **Clone the Repository**
 
