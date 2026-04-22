@@ -1,6 +1,6 @@
 module github.com/dikkadev/bangs
 
-go 1.24.0
+go 1.26.2
 
 require (
 	github.com/dikkadev/prettyslog v0.0.0-20241019093312-edc39a9d900a

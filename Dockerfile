@@ -12,7 +12,7 @@ RUN $HOME/.bun/bin/bun install
 RUN $HOME/.bun/bin/bun run build
 
 # --- Go Builder Stage ---
-FROM golang:1.23-alpine AS builder
+FROM golang:1.26.2-alpine AS builder
 
 ARG VERSION
 ARG TARGETOS
